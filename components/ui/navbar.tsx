@@ -21,7 +21,7 @@ function Navbar() {
                 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),_0_8px_10px_-6px_rgba(0,0,0,0.1),_inset_0_1px_0_0_rgba(255,255,255,0.5),_inset_0_0_20px_0_rgba(255,255,255,0.05)]
             ">
                 <div className="h-full flex-1 flex flex-row pt-[2px]">
-                    <div className="relative aspect-square cursor-pointer">
+                    <a className="relative aspect-square cursor-pointer" href={`/`}>
                         <Image
                             className="drop-shadow-2xl"
                             src="/Comcamp-Logo.png"
@@ -30,7 +30,7 @@ function Navbar() {
                             style={{ objectFit: 'contain' }}
                             priority
                         />
-                    </div>
+                    </a>
                 </div>
                 <div className="flex-2 flex-row gap-x-5 justify-between font-bold xl:text-lg pt-1 hidden lg:flex">
                     <a className="cursor-pointer text-white transition-all duration-300 hover:[text-shadow:_0_0_20px_rgba(235,139,81,0.7)]" href={`#about`}>About</a>

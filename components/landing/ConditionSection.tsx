@@ -43,7 +43,7 @@ function ConditionSection() {
                     shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),_0_8px_10px_-6px_rgba(0,0,0,0.1),_inset_0_1px_0_0_rgba(0,0,0,0.5),_inset_0_0_20px_0_rgba(0,0,0,0.05)]"
                 >
                     <div className="text-center flex-1 font-semibold text-xl p-5 order-2 md:order-1">สามารถเข้าพักได้ในระยะเวลาและสถานที่ที่กำหนด<br/>ตลอดโครงการ</div>
-                    <div className="md:w-[320px] relative">
+                    <div className="md:w-[320px] relative order-1 md:order-2">
                         <Image src="/Landing/Conditions/Condition_2.png" alt="" width={600} height={320} className="object-cover p-[10px] rounded-4xl"/>
                     </div>
                 </div>
@@ -69,7 +69,7 @@ function ConditionSection() {
                     shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),_0_8px_10px_-6px_rgba(0,0,0,0.1),_inset_0_1px_0_0_rgba(0,0,0,0.5),_inset_0_0_20px_0_rgba(0,0,0,0.05)]"
                 >
                     <div className="text-center flex-1 font-semibold text-xl p-5 order-2 md:order-1">ผู้ปกครองอนุญาตและยินยอมให้นักเรียนเข้าร่วมโครงการ</div>
-                    <div className="md:w-[320px] relative">
+                    <div className="md:w-[320px] relative order-1 md:order-2">
                         <Image src="/Landing/Conditions/Condition_4.png" alt="" width={600} height={320} className="object-cover p-[10px] rounded-4xl"/>
                     </div>
                 </div>

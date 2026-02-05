@@ -56,7 +56,6 @@ export default function RootLayout({
         <body
             className={`${notoSansThai.variable} ${zootopiaFont.variable} ${baiJamjuree.variable} ${roboto.variable} font-bai_jamjuree antialiased bg-[#1F456E] dark`} /* bg-[#2D364E] #232C40 */
         >
-        <Navbar/>
         {children}
         <Footer/>
         </body>
