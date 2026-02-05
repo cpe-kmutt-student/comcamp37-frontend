@@ -4,21 +4,17 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "motion/react"
 
 export function CookieModal() {
-    // เริ่มต้นเป็น false ก่อนเพื่อป้องกัน Hydration Error
     const [isVisible, setIsVisible] = useState(false)
 
     useEffect(() => {
-        // เช็คใน LocalStorage ว่าเคยกด Accept ไปหรือยัง
         const consent = localStorage.getItem("comcamp37-cookie-consent")
         if (!consent) {
-            // หน่วงเวลานิดหน่อยเพื่อให้ดูนุ่มนวลตอนโหลดหน้าเว็บเสร็จ
             const timer = setTimeout(() => setIsVisible(true), 1000)
             return () => clearTimeout(timer)
         }
     }, [])
 
     const handleAccept = () => {
-        // บันทึกสถานะลงเครื่อง User
         localStorage.setItem("comcamp37-cookie-consent", "true")
         setIsVisible(false)
     }
@@ -33,25 +29,22 @@ export function CookieModal() {
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     className="fixed right-5 bottom-5 w-[90%] md:w-auto max-w-[520px] md:mr-15 rounded-4xl border-3 border-theme-secondary bg-theme-primary/80 z-50 backdrop-blur-xl shadow-2xl"
                 >
-                    {/* Header */}
                     <div className="bg-theme-primary-darken/80 py-4 px-5 rounded-t-[calc(2rem-3px)] text-xl font-bold text-white">
                         We use cookies!
                     </div>
 
-                    {/* Content */}
                     <div className="px-5 py-6 text-white/90">
                         เว็บไซต์ ComCamp 37 มีการใช้ <b>คุกกี้ (Cookie)</b> พื้นฐานที่จำเป็นซึ่งช่วยให้
                         สามารถเข้าใช้เว็บไซต์ได้โดยการเปิดใช้ฟังก์ชันพื้นฐานต่างๆ และการเข้าสู่
                         ส่วนที่ปลอดภัยของเว็บไซต์ หากไม่มีคุกกี้เหล่านี้ จะไม่สามารถทำงานได้ อย่างถูกต้อง
                     </div>
 
-                    {/* Buttons */}
                     <div className="flex flex-row gap-3 p-4 pt-0">
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.95 }}
                             className="flex-1 rounded-2xl p-4 bg-white/10 hover:bg-white/20 transition-colors cursor-pointer text-white font-medium"
-                            onClick={() => window.open("/privacy-policy", "_blank")} // ตัวอย่าง Link ไปหน้า Policy
+                            onClick={() => window.open("/privacy", "_blank")}
                         >
                             นโยบายความเป็นส่วนตัว
                         </motion.button>
@@ -66,7 +59,6 @@ export function CookieModal() {
                         </motion.button>
                     </div>
 
-                    {/* SVG Decor - Keeping existing svg but ensuring pointer-events-none so it doesn't block clicks */}
                     <div className="absolute -top-15 -right-15 pointer-events-none select-none z-10">
                         <svg className="origin-bottom-left drop-shadow-xl" width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <mask id="path-1-inside-1_698_1253" fill="white">
