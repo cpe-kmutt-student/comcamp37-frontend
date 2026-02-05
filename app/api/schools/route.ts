@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import allSchools from "@/data/schools.json"
+
+export const runtime = 'edge';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -12,9 +13,6 @@ export async function GET(request: Request) {
         .toLowerCase();
 
     try {
-        const filePath = path.join(process.cwd(), 'data', 'schools.json');
-        const fileData = fs.readFileSync(filePath, 'utf8');
-        const allSchools: string[] = JSON.parse(fileData);
 
         if (!cleanQuery) {
             return NextResponse.json(allSchools.slice(0, 4));
