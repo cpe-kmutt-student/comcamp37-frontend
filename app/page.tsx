@@ -1,65 +1,71 @@
+"use client"
+
 import Image from "next/image";
+import { motion } from "motion/react"
+import HeroSection from "@/components/landing/HeroSection";
+import AboutSection from "@/components/landing/AboutSection";
+import LearningSection from "@/components/landing/LearningSection";
+import SponsorSection from "@/components/landing/SponsorSection";
+import ConditionSection from "@/components/landing/ConditionSection";
+import TimelineSection from "@/components/landing/TimelineSection";
+import FAQSection from "@/components/landing/FAQSection";
+import ClickSpark from "@/components/landing/ClickClick";
 
 export default function Home() {
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.1,
+            },
+        },
+    };
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      <ClickSpark
+          sparkColor='#fff'
+          sparkSize={10}
+          sparkRadius={15}
+          sparkCount={8}
+          duration={400}
+          extraScale={2}
+      >
+      <motion.div className="flex flex-col "
+                  variants={containerVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+      >
+          <div>
+              <HeroSection/>
+          </div>
+          <div id={"about"} className="mt-50">
+              <AboutSection/>
+          </div>
+          <div className="mt-50 md:hidden"></div>
+          <div id={"learning"}>
+              <LearningSection/>
+          </div>
+          <div className="pt-50 bg-theme-primary-darken md:hidden"></div>
+          <div id={"condition"}>
+              <ConditionSection/>
+          </div>
+
+          <svg viewBox="0 0 1920 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M1920 116.409L1880 135.922C1840 154.763 1760 193.79 1680 174.277C1600 154.763 1520 77.3815 1440 84.1103C1360 90.1662 1280 181.005 1200 187.061C1120 193.79 994 104.137 914 110.193C819.5 110.193 808 121.097 728 172.909C648 224.721 568 237.506 488 192.422C408 147.339 320 104.93 240 98.8745C160 92.1457 80 105.052 40 150.808L0 192.422V0H40C80 0 160 0 240 0C320 0 400 0 480 0C560 0 640 0 720 0C800 0 880 0 960 0C1040 0 1120 0 1200 0C1280 0 1360 0 1440 0C1520 0 1600 0 1680 0C1760 0 1840 0 1880 0H1920V116.409Z" fill="#151E3D"/>
+          </svg>
+
+          <div id={"timeline"}>
+              <TimelineSection/>
+          </div>
+          <div id={"faq"}>
+              <FAQSection/>
+          </div>
+          <div className="py-30">
+              <SponsorSection/>
+          </div>
+      </motion.div>
+      </ClickSpark>
   );
 }
