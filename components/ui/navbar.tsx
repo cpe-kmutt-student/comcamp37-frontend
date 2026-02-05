@@ -44,7 +44,7 @@ function Navbar() {
                         Coming Soon
                     </button>
                 </div>
-                <div className="lg:hidden mr-5">
+                <div className="lg:hidden mr-5 hidden">
                     <button className="cursor-pointer font-bold bg-transparent transition-all duration-400 h-full flex flex-col justify-center gap-y-2">
                         <div className="w-8 h-0.5 bg-white"></div>
                         <div className="w-8 h-0.5 bg-white"></div>

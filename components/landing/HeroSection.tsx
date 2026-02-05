@@ -27,8 +27,8 @@ function HeroSection() {
     return (
         <div className="relative flex min-h-screen w-full flex-col items-center justify-center mt-8 md:mt-0">
             <div className="md:absolute w-full md:h-screen flex flex-col items-center justify-center align-middle gap-3 z-10">
-                <div className="w-full max-w-[280px] md:max-w-[340px] drop-shadow-xl drop-shadow-black/70">
-                    <div className="relative opacity-0">
+                <div className="w-full max-w-[280px] md:max-w-[340px] drop-shadow-xl drop-shadow-black/70 relative">
+                    <div className="relative w-full opacity-0">
                         <Image
                             className="drop-shadow-2xl"
                             src="/Comcamp-Logo.png"
@@ -39,29 +39,29 @@ function HeroSection() {
                         />
                     </div>
 
-                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full h-full z-10">
-                        <Image className="w-full h-full [clip-path:polygon(19%_20%,26%_46%,0%_50%,0%_25%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
+                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full z-10">
+                        <Image className="w-full [clip-path:polygon(19%_20%,26%_46%,0%_50%,0%_25%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
                     </motion.div>
-                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full h-full z-10">
-                        <Image className="w-full h-full [clip-path:polygon(39%_19%,47%_35%,41%_43%,28%_45%,20%_31%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
+                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full z-10">
+                        <Image className="w-full [clip-path:polygon(39%_19%,47%_35%,41%_43%,28%_45%,20%_31%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
                     </motion.div>
-                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full h-full z-10">
-                        <Image className="w-full h-full [clip-path:polygon(74%_11%,72%_44%,44%_44%,48%_26%,43%_9%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
+                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full  z-10">
+                        <Image className="w-full  [clip-path:polygon(74%_11%,72%_44%,44%_44%,48%_26%,43%_9%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
                     </motion.div>
-                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full h-full z-10">
-                        <Image className="w-full h-full [clip-path:polygon(11%_48%,33%_45%,35%_77%,10%_77%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
+                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full  z-10">
+                        <Image className="w-full  [clip-path:polygon(11%_48%,33%_45%,35%_77%,10%_77%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
                     </motion.div>
-                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full h-full z-10">
-                        <Image className="w-full h-full [clip-path:polygon(34%_53%,49%_53%,49%_73%,35%_73%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
+                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full  z-10">
+                        <Image className="w-full  [clip-path:polygon(34%_53%,49%_53%,49%_73%,35%_73%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
                     </motion.div>
-                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full h-full z-10">
-                        <Image className="w-full h-full [clip-path:polygon(55%_52%,69%_52%,74%_73%,49%_73%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
+                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full  z-10">
+                        <Image className="w-full  [clip-path:polygon(55%_52%,69%_52%,74%_73%,49%_73%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
                     </motion.div>
-                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full h-full z-10">
-                        <Image className="w-full h-full [clip-path:polygon(74%_52%,92%_54%,91%_67%,80%_68%,79%_85%,58%_85%,55%_77%,74%_77%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
+                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full  z-10">
+                        <Image className="w-full  [clip-path:polygon(74%_52%,92%_54%,91%_67%,80%_68%,79%_85%,58%_85%,55%_77%,74%_77%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
                     </motion.div>
-                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full h-full z-10">
-                        <Image className="w-full h-full [clip-path:polygon(74%_24%,72%_41%,88%_53%,100%_55%,100%_37%,88%_26%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
+                    <motion.div variants={itemVariants} className="absolute top-0 left-0 w-full  z-10">
+                        <Image className="w-full  [clip-path:polygon(74%_24%,72%_41%,88%_53%,100%_55%,100%_37%,88%_26%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
                     </motion.div>
                 </div>
                 <div className="text-center font-medium px-4 md:px-10 py-6 rounded-4xl -mt-6 md:-mt-3 mx-3 md:mx-0
