@@ -64,7 +64,7 @@ function HeroSection() {
                         <Image className="w-full  [clip-path:polygon(74%_24%,72%_41%,88%_53%,100%_55%,100%_37%,88%_26%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
                     </motion.div>
                 </div>
-                <div className="text-center font-medium px-4 md:px-10 py-6 rounded-4xl -mt-6 md:-mt-3 mx-3 md:mx-0
+                <div className="text-center font-medium px-4 md:px-10 py-6 rounded-4xl -mt-6 md:-mt-3 mx-3
                     backdrop-blur-sm
 
                 bg-gradient-to-b from-black/30 to-black/20

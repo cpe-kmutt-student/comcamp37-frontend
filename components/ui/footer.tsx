@@ -16,9 +16,9 @@ function Footer() {
                 <div className="row-span-2 col-span-1 flex flex-col gap-10">
                     <div className="font-zootopia text-4xl">Social Media</div>
                     <div className="text-xl xl:text-2xl flex flex-col gap-3">
-                        <div><FontAwesomeIcon icon={faFacebookSquare} /> Comcamp KMUTT</div>
-                        <div><FontAwesomeIcon icon={faInstagram} /> @comcamp.kmutt</div>
-                        <div><FontAwesomeIcon icon={faTiktok} /> @comcamp.kmutt</div>
+                        <a href={`https://www.facebook.com/KMUTTcomcamp/`} target="_blank" className="hover:underline underline-offset-3"><FontAwesomeIcon icon={faFacebookSquare} /> Comcamp KMUTT</a>
+                        <a href={`https://www.instagram.com/comcamp.kmutt/`} target="_blank" className="hover:underline underline-offset-3"><FontAwesomeIcon icon={faInstagram} /> @comcamp.kmutt</a>
+                        <a href={`https://www.tiktok.com/@comcamp.kmutt`} target="_blank" className="hover:underline underline-offset-3"><FontAwesomeIcon icon={faTiktok} /> @comcamp.kmutt</a>
                     </div>
                 </div>
                 <div className="row-span-1 col-span-1 flex flex-col gap-5">

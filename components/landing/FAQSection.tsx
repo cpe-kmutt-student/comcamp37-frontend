@@ -77,7 +77,7 @@ function FAQSection() {
                             </AccordionItem>
                         ))}
                     </Accordion>
-                    <button className="text-theme-primary font-bold text-lg relative group pl-5" onClick={() => {router.push(`/faq`);}}>
+                    <button className="text-theme-primary font-bold text-lg relative group pl-5 cursor-pointer" onClick={() => {router.push(`/faq`);}}>
                         <div className="absolute -left-0 transition-all group-hover:left-1.5">{'>'}</div><div>คำถามเพิ่มเติม</div>
                     </button>
                 </div>
@@ -99,7 +99,6 @@ function FAQSection() {
             </div>
             </div>
 
-            <div></div>
         </div>
     )
 }
