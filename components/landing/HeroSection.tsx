@@ -23,10 +23,22 @@ const itemVariants:Variants = {
     },
 };
 
+const bgVariant:Variants = {
+    hidden: {
+        opacity: 0,
+    },
+    visible: {
+        opacity: 1,
+        transition: {
+            duration: 2.0,
+        },
+    },
+};
+
 function HeroSection() {
     return (
-        <div className="relative flex min-h-screen w-full flex-col items-center justify-center mt-8 md:mt-0">
-            <div className="md:absolute w-full md:h-screen flex flex-col items-center justify-center align-middle gap-3 z-10">
+        <div className="relative flex min-h-screen w-full flex-col items-center justify-center -mt-8 md:mt-0">
+            <div className="w-full flex flex-col items-center justify-center align-middle gap-3 z-10 md:pt-20">
                 <div className="w-full max-w-[280px] md:max-w-[340px] drop-shadow-xl drop-shadow-black/70 relative">
                     <div className="relative w-full opacity-0">
                         <Image
@@ -64,7 +76,7 @@ function HeroSection() {
                         <Image className="w-full  [clip-path:polygon(74%_24%,72%_41%,88%_53%,100%_55%,100%_37%,88%_26%)]" src="/Comcamp-Logo.png" alt="Logo Part" width={800} height={800} priority />
                     </motion.div>
                 </div>
-                <div className="text-center font-medium px-4 md:px-10 py-6 rounded-4xl -mt-6 md:-mt-3 mx-3
+                <motion.div variants={itemVariants} className="text-center font-medium px-4 md:px-10 py-6 rounded-4xl -mt-6 md:-mt-3 mx-3
                     backdrop-blur-sm
 
                 bg-gradient-to-b from-black/30 to-black/20
@@ -78,30 +90,29 @@ function HeroSection() {
                         พร้อมสัมผัสชีวิตนักศึกษาวิศวะคอมฯ อย่างใกล้ชิด กับเพื่อน ๆ และพี่ ๆ CPE<br/><br className="block md:hidden"/>
                         การผจญภัยครั้งใหม่กำลังรออยู่ แล้วพบกันใน ComCamp ครั้งที่ 37
                     </span>
-                </div>
-                <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="bg-white w-full max-w-[340px] flex items-center justify-center gap-3 h-15 px-4 rounded-xl shadow-lg shadow-black/50 cursor-pointer"
+                </motion.div>
+                <motion.div
+                    variants={itemVariants}
+                    className="bg-white w-full max-w-[340px] flex items-center justify-center gap-3 h-15 px-4 rounded-xl shadow-lg shadow-black/50 mb-10"
                 >
                     <span className="text-black font-bold text-xl leading-15.5 tracking-tight font-zootopia h-full">
                         Coming Soon
                     </span>
-                </motion.button>
+                </motion.div>
             </div>
-            <div className="absolute w-full overflow-y-visible h-screen hidden md:block">
-                <div className="absolute w-full h-screen overflow-y-visible overflow-x-clip pt-40 z-2">
-                    <div className="rotate-10 py-20 scale-120 overflow-hidden origin-center">
+            <motion.div variants={bgVariant} className="absolute w-full h-full hidden md:flex flex-col">
+                <div className="absolute w-full h-full overflow-y-visible overflow-x-clip z-2 flex justify-center items-center align-middle">
+                    <div className="rotate-10 py-20 mt-50 scale-120 overflow-hidden origin-center">
                         <InfiniteCarousel/>
                     </div>
                 </div>
 
-                <div className="absolute w-full h-screen z-1">
+                <div className="absolute w-full h-full z-1">
                     <div className="bg-gradient-to-t from-theme-primary-darken to-transparent h-[20%] w-full"></div>
                     <div className="bg-theme-primary-darken h-[60%] w-full"></div>
                     <div className="bg-gradient-to-b from-theme-primary-darken to-transparent h-[40%] w-full"></div>
                 </div>
-            </div>
+            </motion.div>
         </div>
     )
 }

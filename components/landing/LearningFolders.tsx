@@ -30,7 +30,7 @@ const LearningFolder = React.forwardRef<HTMLDivElement, LearningFolderProps>(
         const matrixValues = `0 0 0 0 ${rgb.r / 255} 0 0 0 0 ${rgb.g / 255} 0 0 0 0 ${rgb.b / 255} 0 0 0 1 0`;
 
         return (
-            <div ref={ref} className={cn("relative w-full mx-auto", className)} {...props}>
+            <div ref={ref} className={cn("relative w-full mx-auto translate-x-0.5 md:translate-0 scale-110 md:scale-100", className)} {...props}>
                 <svg viewBox="0 0 845 533" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
                     {/* Back Folder */}
                     <g filter={`url(#${filterId})`}>
@@ -71,7 +71,7 @@ LearningFolder.displayName = "LearningFolder"
 
 const LearningContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
     ({ className, children, ...props }, ref) => (
-        <div ref={ref} className={cn("flex flex-col gap-3 w-2/3 pr-4", className)} {...props}>
+        <div ref={ref} className={cn("flex flex-col gap-3 w-1/1 md:w-2/3 pr-4", className)} {...props}>
             {children}
         </div>
     )
@@ -80,7 +80,7 @@ LearningContent.displayName = "LearningContent"
 
 const LearningTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
     ({ className, children, ...props }, ref) => (
-        <h3 ref={ref} className={cn("text-3xl font-bold text-black tracking-tight mb-5", className)} {...props}>
+        <h3 ref={ref} className={cn("text-3xl font-bold text-black tracking-tight mb-3 md:mb-5", className)} {...props}>
             {children}
         </h3>
     )
@@ -89,7 +89,7 @@ LearningTitle.displayName = "LearningTitle"
 
 const LearningDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
     ({ className, children, ...props }, ref) => (
-        <p ref={ref} className={cn("text-gray-800 text-base leading-relaxed line-clamp-6", className)} {...props}>
+        <p ref={ref} className={cn("text-gray-800 text-2xl md:text-base leading-relaxed line-clamp-6", className)} {...props}>
             {children}
         </p>
     )
@@ -103,7 +103,7 @@ const LearningLogo = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
             ref={ref}
             // Added classes: [&>svg] targets any direct SVG child
             className={cn(
-                "w-1/3 flex flex-col items-center align-middle justify-center h-full p-3 text-gray-400/80",
+                "hidden w-1/5 md:w-1/3 md:flex flex-col items-center align-middle justify-center h-full p-3 text-gray-400/80",
                 className
             )}
             {...props}
