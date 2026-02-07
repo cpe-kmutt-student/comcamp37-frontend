@@ -12,6 +12,8 @@ import FAQSection from "@/components/landing/FAQSection";
 import ClickSpark from "@/components/landing/ClickClick";
 import {Navbar} from "@/components/ui/navbar";
 import {CookieModal} from "@/components/landing/CookieModal";
+import ComingSoonSection from "@/components/comingSoon/ComingSoonSection";
+import {Footer} from "@/components/ui/footer";
 
 export default function Home() {
     const containerVariants = {
@@ -33,7 +35,6 @@ export default function Home() {
           duration={400}
           extraScale={2}
       >
-          <Navbar/>
       <motion.div className="flex flex-col "
                   variants={containerVariants}
                   initial="hidden"
@@ -70,6 +71,7 @@ export default function Home() {
           </div>
           <CookieModal/>
       </motion.div>
+          <Footer/>
       </ClickSpark>
   );
 }

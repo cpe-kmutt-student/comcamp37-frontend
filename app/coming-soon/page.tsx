@@ -31,7 +31,7 @@ export default function Home() {
                   whileInView="visible"
                   viewport={{ once: true }}
       >
-          <div className="max-h-screen overflow-hidden max-w-svw">
+          <div>
               <ComingSoonSection/>
           </div>
           <CookieModal/>

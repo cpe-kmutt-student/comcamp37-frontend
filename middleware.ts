@@ -23,17 +23,20 @@ const ACCESS_RULES = [
 
 export function middleware(request: NextRequest) {
 
-    if (process.env.NEXT_PUBLIC_IS_COMINGSOON === 'true') {
-        const url = request.nextUrl.clone();
-        url.pathname = '/coming-soon';
-        return NextResponse.rewrite(url);
-    }
-
     if (process.env.NEXT_PUBLIC_BYPASS_REGISTER_TIME === 'true') {
         return NextResponse.next();
     }
 
     const { pathname } = request.nextUrl;
+
+    if (process.env.NEXT_PUBLIC_IS_COMINGSOON === 'true') {
+        if (pathname == '/') {
+            const url = request.nextUrl.clone();
+            url.pathname = '/coming-soon';
+            return NextResponse.rewrite(url);
+        }
+    }
+
     const now = Date.now();
 
     const rule = ACCESS_RULES.find(r => pathname.startsWith(r.path));

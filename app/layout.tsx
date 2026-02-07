@@ -4,6 +4,7 @@ import localFont from 'next/font/local'
 import "./globals.css";
 import {Navbar} from "@/components/ui/navbar";
 import {Footer} from "@/components/ui/footer";
+import MicrosoftClarity from "@/app/metrics/MicrosoftClarity";
 
 export const runtime = 'edge';
 
@@ -58,7 +59,14 @@ export default function RootLayout({
         <body
             className={`${notoSansThai.variable} ${zootopiaFont.variable} ${baiJamjuree.variable} ${roboto.variable} font-bai_jamjuree antialiased bg-[#1F456E] dark`} /* bg-[#2D364E] #232C40 */
         >
+        { process.env.NEXT_PUBLIC_IS_COMINGSOON ? (
+            ''
+        ) : (
+            <Navbar/>
+        )}
+
         {children}
+        <MicrosoftClarity/>
         </body>
         </html>
     );
