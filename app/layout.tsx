@@ -94,11 +94,11 @@ export default function RootLayout({
         <body
             className={`${notoSansThai.variable} ${zootopiaFont.variable} ${baiJamjuree.variable} ${roboto.variable} font-bai_jamjuree antialiased bg-theme-primary dark`} /* bg-[#2D364E] #232C40 */
         >
-        <UserProvider>
+        {/*<UserProvider>*/}
             { process.env.NEXT_PUBLIC_IS_COMINGSOON  == 'false' && (<Navbar/>)}
 
         {children}
-        </UserProvider>
+            {/*</UserProvider>*/}
         <MicrosoftClarity/>
         <Toaster />
         </body>
