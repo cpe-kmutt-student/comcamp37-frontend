@@ -70,7 +70,7 @@ export const metadata: Metadata = {
                 url: 'https://storage.comcamp.io/web-assets/og.png',
                 width: 1200,
                 height: 630,
-                alt: 'ComCamp 37 - Zootopia Theme City Rebuilding',
+                alt: 'ComCamp 37',
             },
         ],
         locale: 'th_TH',
