@@ -6,7 +6,7 @@ import {Navbar} from "@/components/ui/navbar";
 import {Footer} from "@/components/ui/footer";
 import { Toaster } from "@/components/ui/sonner"
 import MicrosoftClarity from "@/app/metrics/MicrosoftClarity";
-import {UserProvider} from "@/contexts/UserContext";
+//import {UserProvider} from "@/contexts/UserContext";
 
 export const runtime = 'edge';
 
