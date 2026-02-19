@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import * as React from "react";
+import {Variants} from "motion";
 
 const TIMELINE_DATA = [
     {
@@ -21,16 +22,16 @@ const TIMELINE_DATA = [
     {
         id: 3,
         title: "ยืนยันสิทธิ์",
-        dateDisplay: "21 - 23 มีนาคม 2569",
+        dateDisplay: "21 - 22 มีนาคม 2569",
         startDate: "2026-03-21",
-        endDate: "2026-03-23",
+        endDate: "2026-03-22",
     },
     {
         id: 4,
         title: "วันค่าย",
-        dateDisplay: "8 - 11 เมษายน 2569",
+        dateDisplay: "8 - 12 เมษายน 2569",
         startDate: "2026-04-08",
-        endDate: "2026-04-11",
+        endDate: "2026-04-12",
     },
 ];
 
@@ -40,6 +41,36 @@ function TimelineSection() {
     const checkpointsRef = React.useRef<(HTMLDivElement | null)[]>([]);
     const progressBarRef = React.useRef<HTMLDivElement>(null);
 
+    // --- Animation Variants ---
+
+    // 1. เส้น Header ขยายออกข้าง
+    const headerLineVariants:Variants = {
+        hidden: { scaleX: 0, opacity: 0 },
+        visible: {
+            scaleX: 1,
+            opacity: 1,
+            transition: { duration: 0.8, ease: "circOut" }
+        }
+    };
+
+    // 2. Card เด้งขึ้นมาทีละอัน (Stagger)
+    const cardVariants:Variants = {
+        hidden: { opacity: 0, scale: 0.5, y: 50 },
+        visible: (index: number) => ({
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                bounce: 0.5, // ค่านี้ยิ่งเยอะยิ่งเด้ง
+                damping: 12,
+                stiffness: 120,
+                delay: index * 0.15 // หน่วงเวลาให้โผล่ตามกันมา
+            }
+        })
+    };
+
+    // --- Logic เดิม (คำนวณ Progress) ---
     React.useEffect(() => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -47,18 +78,15 @@ function TimelineSection() {
         let milestoneIndex = -1;
         let milestoneProgress = 0;
 
-        // Check if we haven't reached the first milestone yet
         const firstMilestoneStart = new Date(TIMELINE_DATA[0].startDate);
         firstMilestoneStart.setHours(0, 0, 0, 0);
 
         if (today < firstMilestoneStart) {
-            // Before the first milestone - no progress
             setCurrentMilestone(-1);
             setProgress(0);
             return;
         }
 
-        // Find the last completed milestone
         for (let i = 0; i < TIMELINE_DATA.length; i++) {
             const milestoneStart = new Date(TIMELINE_DATA[i].startDate);
             milestoneStart.setHours(0, 0, 0, 0);
@@ -66,35 +94,25 @@ function TimelineSection() {
             milestoneEnd.setHours(23, 59, 59, 999);
 
             if (today >= milestoneStart && today <= milestoneEnd) {
-                // We're currently in this milestone
                 milestoneIndex = i;
                 const totalDuration = milestoneEnd.getTime() - milestoneStart.getTime();
                 const elapsed = today.getTime() - milestoneStart.getTime();
-
-                if (totalDuration > 0) {
-                    milestoneProgress = elapsed / totalDuration;
-                } else {
-                    milestoneProgress = 1;
-                }
+                milestoneProgress = totalDuration > 0 ? elapsed / totalDuration : 1;
                 break;
             } else if (today > milestoneEnd) {
-                // This milestone has passed - keep track of it
                 milestoneIndex = i;
-                milestoneProgress = 1; // Completed
+                milestoneProgress = 1;
             } else {
-                // Haven't reached this milestone yet - stay at the last completed one
                 break;
             }
         }
 
-        // If all milestones are completed
         if (milestoneIndex >= TIMELINE_DATA.length - 1 && milestoneProgress === 1) {
             milestoneIndex = TIMELINE_DATA.length - 1;
         }
 
         setCurrentMilestone(milestoneIndex);
 
-        // Calculate actual pixel-based progress
         const calculateProgress = () => {
             if (!progressBarRef.current || checkpointsRef.current.length === 0) return;
 
@@ -104,25 +122,21 @@ function TimelineSection() {
 
             if (barWidth === 0) return;
 
-            // Get current checkpoint position
             const currentCheckpoint = checkpointsRef.current[milestoneIndex];
-
             if (!currentCheckpoint) {
                 setProgress(0);
                 return;
             }
 
             const currentRect = currentCheckpoint.getBoundingClientRect();
-            const currentCenter = currentRect.left + currentRect.width / 2 - barLeft;
+            // ปรับการคำนวณ Center ให้แม่นยำขึ้นสำหรับการแสดงผล
+            const currentCenter = (currentRect.left + currentRect.width / 2) - barLeft;
 
             if (milestoneProgress === 1) {
-                // Stay at this checkpoint
                 const progressPercent = (currentCenter / barWidth) * 100;
                 setProgress(Math.min(progressPercent, 100));
             } else {
-                // In progress - move towards next checkpoint
                 const nextCheckpoint = checkpointsRef.current[milestoneIndex + 1];
-
                 if (!nextCheckpoint) {
                     const progressPercent = (currentCenter / barWidth) * 100;
                     setProgress(Math.min(progressPercent, 100));
@@ -130,8 +144,7 @@ function TimelineSection() {
                 }
 
                 const nextRect = nextCheckpoint.getBoundingClientRect();
-                const nextCenter = nextRect.left + nextRect.width / 2 - barLeft;
-
+                const nextCenter = (nextRect.left + nextRect.width / 2) - barLeft;
                 const distance = nextCenter - currentCenter;
                 const progressPixels = currentCenter + (distance * milestoneProgress);
                 const progressPercent = (progressPixels / barWidth) * 100;
@@ -140,10 +153,8 @@ function TimelineSection() {
             }
         };
 
-        // Wait for layout to settle
         const timer = setTimeout(calculateProgress, 100);
         window.addEventListener('resize', calculateProgress);
-
         return () => {
             clearTimeout(timer);
             window.removeEventListener('resize', calculateProgress);
@@ -151,12 +162,19 @@ function TimelineSection() {
     }, [currentMilestone]);
 
     return (
-        <div className='w-full flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32'>
+        <motion.div
+            className='w-full flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32'
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+        >
             <div className="w-full max-w-7xl flex flex-col gap-8 md:gap-12">
-                {/* Header */}
-                <div className="flex flex-row items-center justify-center gap-4 md:gap-8 lg:gap-10">
-                    <svg
-                        className="hidden sm:block w-32 md:w-64 lg:w-96 xl:w-[500px]"
+
+                {/* --- Header Section (เส้นพุ่งออก + ตัวหนังสือเด้ง) --- */}
+                <div className="flex flex-row items-center justify-center gap-4 md:gap-8 lg:gap-10 overflow-hidden">
+                    <motion.svg
+                        variants={headerLineVariants}
+                        className="hidden md:block w-32 md:w-64 lg:w-96 xl:w-[500px] origin-right"
                         height="5"
                         viewBox="0 0 500 5"
                         fill="none"
@@ -169,14 +187,33 @@ function TimelineSection() {
                                 <stop offset="1" stopColor="white"/>
                             </linearGradient>
                         </defs>
-                    </svg>
+                    </motion.svg>
 
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white whitespace-nowrap">
+                    <motion.h2
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ type: "spring", bounce: 0.6 }}
+                        className="text-3xl sm:text-4xl md:text-5xl font-bold text-white whitespace-nowrap font-zootopia hidden md:block"
+                    >
                         Timeline
-                    </h2>
+                    </motion.h2>
 
-                    <svg
-                        className="hidden sm:block w-32 md:w-64 lg:w-96 xl:w-[500px]"
+                    <motion.div
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ type: "spring", bounce: 0.6 }}
+                        className="font-zootopia text-5xl md:hidden flex-row flex items-center justify-center gap-3 w-full"
+                    >
+                        <div className="h-1.5 w-full flex-1 bg-linear-to-l from-white to-transparent"></div>
+                        <div>Timeline</div>
+                        <div className="h-1.5 w-full flex-1 bg-linear-to-r from-white to-transparent"></div>
+                    </motion.div>
+
+                    <motion.svg
+                        variants={headerLineVariants}
+                        className="hidden md:block w-32 md:w-64 lg:w-96 xl:w-[500px] origin-left"
                         height="5"
                         viewBox="0 0 500 5"
                         fill="none"
@@ -189,26 +226,28 @@ function TimelineSection() {
                                 <stop offset="1" stopColor="white" stopOpacity="0"/>
                             </linearGradient>
                         </defs>
-                    </svg>
+                    </motion.svg>
                 </div>
 
-                {/* Desktop Timeline */}
+                {/* --- Desktop Timeline --- */}
                 <div className="hidden lg:flex flex-row justify-center gap-6 xl:gap-12 relative mt-10">
-                    {/* Progress Bar */}
+
+                    {/* Progress Bar Background */}
                     <div
                         ref={progressBarRef}
-                        className="absolute bottom-5 left-0 right-0 h-2.5 bg-black/50 rounded-full shadow-xl overflow-hidden"
+                        className="absolute xl:bottom-6.5 bottom-4.5 left-0 right-0 h-3 bg-black/40 rounded-full shadow-inner overflow-hidden border border-white/5"
                     >
+                        {/* Progress Fill (Flowing Effect) */}
                         <motion.div
                             className="h-full bg-theme-secondary"
+                            style={{ boxShadow: "0 0 15px rgba(239, 68, 68, 0.6)" }}
                             initial={{ width: 0 }}
                             animate={{ width: `${progress}%` }}
-                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            transition={{ duration: 1.5, ease: "circOut" }}
                         />
                     </div>
 
                     {TIMELINE_DATA.map((item, index) => {
-                        // Check if this milestone is completed
                         const milestoneEnd = new Date(item.endDate);
                         milestoneEnd.setHours(23, 59, 59, 999);
                         const today = new Date();
@@ -219,35 +258,52 @@ function TimelineSection() {
                         return (
                             <motion.div
                                 key={item.id}
+                                custom={index}
+                                variants={cardVariants}
                                 className="flex flex-col gap-6 items-center z-10"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.2 }}
                             >
-                                <div className={`text-xl xl:text-2xl text-white text-center font-bold w-48 xl:w-60 py-6 xl:py-8 rounded-3xl backdrop-blur-sm bg-gradient-to-b from-white/5 to-white/2 border border-white/20 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),_0_8px_10px_-6px_rgba(0,0,0,0.1),_inset_0_1px_0_0_rgba(255,255,255,0.5),_inset_0_0_20px_0_rgba(255,255,255,0.05)] transition-all duration-300                                }`}>
+                                {/* Milestone Card */}
+                                <motion.div
+                                    whileHover={{ y: -8, scale: 1.05 }} // Hover แล้วลอยขึ้น
+                                    className={`
+                                        text-xl xl:text-2xl text-white text-center font-bold w-48 xl:w-60 py-6 xl:py-8 rounded-3xl backdrop-blur-md 
+                                        bg-gradient-to-b from-white/10 to-white/5 border border-white/20 
+                                        shadow-[0_20px_25px_-5px_rgba(0,0,0,0.3)] transition-colors duration-300
+                                    `}
+                                >
                                     {item.title}
-                                </div>
-                                <div className="text-center text-white text-base xl:text-lg font-semibold px-2">
+                                </motion.div>
+
+                                <div className="text-center text-white/90 text-base xl:text-lg font-semibold px-2">
                                     {item.dateDisplay}
                                 </div>
+
+                                {/* Checkpoint Circle */}
                                 <div
                                     ref={(el) => { checkpointsRef.current[index] = el; }}
-                                    className={`border-4 w-12 h-12 xl:w-14 xl:h-14 rounded-full mt-4 flex items-center justify-center shadow-lg transition-all duration-500 ${
-                                        isCompleted
-                                            ? 'border-red-700 bg-red-500'
-                                            : isCurrent
-                                                ? 'bg-red-500 scale-110'
-                                                : 'border-gray-600 bg-gray-700'
-                                    }`}
+                                    className={`
+                                        border-4 w-12 h-12 xl:w-16 xl:h-16 rounded-full mt-4 flex items-center justify-center shadow-2xl z-20 
+                                        transition-all duration-500
+                                        ${isCompleted
+                                        ? 'border-theme-secondary bg-theme-secondary'
+                                        : isCurrent
+                                            ? 'bg-theme-secondary border-white ring-4 ring-theme-secondary/30'
+                                            : 'border-gray-600 bg-gray-800'
+                                    }
+                                    `}
                                 >
                                     {isCompleted ? (
-                                        // Checkmark for completed
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M20 6L9 17L4 12" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                                        </svg>
+                                        <motion.svg
+                                            initial={{ scale: 0, rotate: -45 }}
+                                            animate={{ scale: 1, rotate: 0 }}
+                                            transition={{ type: "spring", stiffness: 200 }}
+                                            width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path d="M20 6L9 17L4 12" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                                        </motion.svg>
                                     ) : (
-                                        // X for current and upcoming
-                                        <svg width="28" height="28" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        // X Mark or Dot
+                                        <svg width="24" height="24" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-50">
                                             <path d="M14.143 42.4262C12.1903 40.4736 12.1903 37.3078 14.143 35.3552L35.26 14.2381C37.2396 12.2586 40.4512 12.3484 42.4307 14.328C44.3045 16.2017 44.3942 19.246 42.5205 21.1198L21.214 42.4262C19.2614 44.3789 16.0956 44.3789 14.143 42.4262Z" fill="white"/>
                                             <path d="M42.4262 42.4265C40.4735 44.3791 37.3077 44.3791 35.3551 42.4265L14.238 21.3094C12.2585 19.3299 12.3483 16.1182 14.3279 14.1387C16.2016 12.2649 19.2459 12.1752 21.1197 14.0489L42.4262 35.3554C44.3788 37.308 44.3788 40.4738 42.4262 42.4265Z" fill="white"/>
                                         </svg>
@@ -258,20 +314,18 @@ function TimelineSection() {
                     })}
                 </div>
 
-                {/* Mobile/Tablet Timeline - Vertical */}
+                {/* --- Mobile/Tablet Timeline (Vertical) --- */}
                 <div className="lg:hidden flex flex-col gap-8 mt-8 relative px-4">
-                    {/* Vertical Progress Line */}
-                    <div className="absolute left-9.5 -top-6 w-1 h-full bg-black/50 rounded-full overflow-hidden">
+                    <div className="absolute left-9.5 -top-6 w-1.5 h-full bg-black/40 rounded-full overflow-hidden border border-white/5">
                         <motion.div
-                            className="w-full bg-red-500"
+                            className="w-full bg-theme-secondary shadow-[0_0_10px_rgba(239,68,68,0.8)]"
                             initial={{ height: 0 }}
                             animate={{ height: `${progress}%` }}
-                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            transition={{ duration: 1.5, ease: "circOut" }}
                         />
                     </div>
 
                     {TIMELINE_DATA.map((item, index) => {
-                        // Check if this milestone is completed
                         const milestoneEnd = new Date(item.endDate);
                         milestoneEnd.setHours(23, 59, 59, 999);
                         const today = new Date();
@@ -282,25 +336,38 @@ function TimelineSection() {
                         return (
                             <motion.div
                                 key={item.id}
+                                custom={index}
+                                variants={{
+                                    hidden: { opacity: 0, x: -50 },
+                                    visible: (i: number) => ({
+                                        opacity: 1, x: 0,
+                                        transition: { type: "spring", bounce: 0.4, delay: i * 0.15 }
+                                    })
+                                }}
                                 className="flex flex-row gap-6 items-start z-10"
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.2 }}
                             >
                                 {/* Checkpoint */}
-                                <div className={`border-4 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 transition-all duration-500 ${
-                                    isCompleted
-                                        ? 'border-red-700 bg-red-500'
+                                <div
+                                    className={`
+                                        border-4 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 
+                                        transition-all duration-500
+                                        ${isCompleted
+                                        ? 'border-theme-secondary bg-theme-secondary'
                                         : isCurrent
-                                            ? 'border-red-700 bg-red-500 scale-110'
-                                            : 'border-gray-600 bg-gray-700'
-                                }`}>
+                                            ? 'border-white bg-theme-secondary ring-4 ring-theme-secondary/30'
+                                            : 'border-gray-600 bg-gray-800'
+                                    }
+                                    `}
+                                >
                                     {isCompleted ? (
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <motion.svg
+                                            initial={{ scale: 0 }} animate={{ scale: 1 }}
+                                            width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        >
                                             <path d="M20 6L9 17L4 12" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                                        </svg>
+                                        </motion.svg>
                                     ) : (
-                                        <svg width="24" height="24" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg width="24" height="24" viewBox="0 0 57 57" fill="none" className="opacity-50">
                                             <path d="M14.143 42.4262C12.1903 40.4736 12.1903 37.3078 14.143 35.3552L35.26 14.2381C37.2396 12.2586 40.4512 12.3484 42.4307 14.328C44.3045 16.2017 44.3942 19.246 42.5205 21.1198L21.214 42.4262C19.2614 44.3789 16.0956 44.3789 14.143 42.4262Z" fill="white"/>
                                             <path d="M42.4262 42.4265C40.4735 44.3791 37.3077 44.3791 35.3551 42.4265L14.238 21.3094C12.2585 19.3299 12.3483 16.1182 14.3279 14.1387C16.2016 12.2649 19.2459 12.1752 21.1197 14.0489L42.4262 35.3554C44.3788 37.308 44.3788 40.4738 42.4262 42.4265Z" fill="white"/>
                                         </svg>
@@ -308,22 +375,28 @@ function TimelineSection() {
                                 </div>
 
                                 {/* Content */}
-                                <div className="flex flex-col gap-3 flex-1">
-                                    <div className={`text-xl sm:text-2xl text-white font-bold py-4 px-6 rounded-2xl backdrop-blur-sm bg-gradient-to-b from-white/5 to-white/2 border border-white/20 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),_0_8px_10px_-6px_rgba(0,0,0,0.1),_inset_0_1px_0_0_rgba(255,255,255,0.5),_inset_0_0_20px_0_rgba(255,255,255,0.05)] transition-all duration-300 ${
-                                        (isCompleted || isCurrent) ? 'ring-2 ring-red-500/50' : ''
-                                    }`}>
+                                <motion.div
+                                    whileTap={{ scale: 0.95 }}
+                                    className="flex flex-col gap-3 flex-1"
+                                >
+                                    <div className={`
+                                        text-xl sm:text-2xl text-white font-bold py-4 px-6 rounded-2xl backdrop-blur-sm 
+                                        bg-gradient-to-b from-white/10 to-white/5 border border-white/20 
+                                        shadow-lg transition-all duration-300
+                                        ${(isCompleted || isCurrent) ? 'ring-2 ring-red-500/50 bg-white/10' : ''}
+                                    `}>
                                         {item.title}
                                     </div>
-                                    <div className="text-white text-base sm:text-lg font-semibold ml-2">
+                                    <div className="text-white/80 text-base sm:text-lg font-semibold ml-2">
                                         {item.dateDisplay}
                                     </div>
-                                </div>
+                                </motion.div>
                             </motion.div>
                         );
                     })}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }
 

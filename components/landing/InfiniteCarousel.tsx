@@ -7,28 +7,28 @@ import Image from 'next/image';
 const InfiniteCarousel = () => {
     // ตัวอย่างรูปภาพ - คุณสามารถเปลี่ยนเป็นรูปของคุณเองได้
     const photos1 = [
-        { id: 1, src: '/Landing/Carousel/Carousel1_1.jpg', alt: 'Photo 1' },
-        { id: 2, src: '/Landing/Carousel/Carousel1_2.jpg', alt: 'Photo 2' },
-        { id: 3, src: '/Landing/Carousel/Carousel1_3.jpg', alt: 'Photo 3' },
-        { id: 4, src: '/Landing/Carousel/Carousel1_4.jpg', alt: 'Photo 4' },
-        { id: 5, src: '/Landing/Carousel/Carousel1_5.jpg', alt: 'Photo 5' },
+        { id: 1, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel1_1.jpg`, alt: 'Photo 1' },
+        { id: 2, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel1_2.jpg`, alt: 'Photo 2' },
+        { id: 3, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel1_3.jpg`, alt: 'Photo 3' },
+        { id: 4, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel1_4.jpg`, alt: 'Photo 4' },
+        { id: 5, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel1_5.jpg`, alt: 'Photo 5' },
     ];
 
     const photos2 = [
-        { id: 1, src: '/Landing/Carousel/Carousel2_1.jpg', alt: 'Photo 1' },
-        { id: 2, src: '/Landing/Carousel/Carousel2_2.jpg', alt: 'Photo 2' },
-        { id: 3, src: '/Landing/Carousel/Carousel2_3.jpg', alt: 'Photo 3' },
-        { id: 4, src: '/Landing/Carousel/Carousel2_4.jpg', alt: 'Photo 4' },
-        { id: 5, src: '/Landing/Carousel/Carousel2_5.jpg', alt: 'Photo 5' },
-        { id: 6, src: '/Landing/Carousel/Carousel2_6.jpg', alt: 'Photo 6' },
+        { id: 1, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel2_1.jpg`, alt: 'Photo 1' },
+        { id: 2, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel2_2.jpg`, alt: 'Photo 2' },
+        { id: 3, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel2_3.jpg`, alt: 'Photo 3' },
+        { id: 4, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel2_4.jpg`, alt: 'Photo 4' },
+        { id: 5, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel2_5.jpg`, alt: 'Photo 5' },
+        { id: 6, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel2_6.jpg`, alt: 'Photo 6' },
     ];
 
     const photos3 = [
-        { id: 1, src: '/Landing/Carousel/Carousel3_1.jpg', alt: 'Photo 1' },
-        { id: 2, src: '/Landing/Carousel/Carousel3_2.jpg', alt: 'Photo 2' },
-        { id: 3, src: '/Landing/Carousel/Carousel3_3.jpg', alt: 'Photo 3' },
-        { id: 4, src: '/Landing/Carousel/Carousel3_4.jpg', alt: 'Photo 4' },
-        { id: 5, src: '/Landing/Carousel/Carousel3_5.jpg', alt: 'Photo 5' },
+        { id: 1, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel3_1.jpg`, alt: 'Photo 1' },
+        { id: 2, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel3_2.jpg`, alt: 'Photo 2' },
+        { id: 3, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel3_3.jpg`, alt: 'Photo 3' },
+        { id: 4, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel3_4.jpg`, alt: 'Photo 4' },
+        { id: 5, src: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/Landing/Carousel/Carousel3_5.jpg`, alt: 'Photo 5' },
     ];
 
     return (
@@ -51,6 +51,7 @@ const InfiniteCarousel = () => {
                                 fill
                                 sizes="auto"
                                 className="object-cover"
+                                unoptimized
                             />
                         </div>
                     ))}
@@ -68,6 +69,7 @@ const InfiniteCarousel = () => {
                                 fill
                                 sizes="auto"
                                 className="object-cover"
+                                unoptimized
                             />
                         </div>
                     ))}
@@ -85,6 +87,7 @@ const InfiniteCarousel = () => {
                                 fill
                                 sizes="auto"
                                 className="object-cover"
+                                unoptimized
                             />
                         </div>
                     ))}

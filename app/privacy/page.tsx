@@ -1,5 +1,6 @@
 "use client";
 
+import {Navbar} from "@/components/ui/navbar";
 import {Footer} from "@/components/ui/footer";
 
 export default function Privacy() {
@@ -20,7 +21,7 @@ export default function Privacy() {
 
         <div className='flex justify-around'>
           <nav className=' font-bold min-w-70 max-h-80 pt-0 text-lg bg-[#151E3D] m-10 mt-0 mr-10 rounded-2xl self-start
-          sticky top-24 w-1/4 hidden md:flex flex-col
+          sticky top-24 w-1/4 max-h-[calc(60vh-5rem)] hidden md:flex flex-col
   '>
               <p className="sticky flex justify-center bg-[#151E3D] p-5 px-20 top-0 w-full m-0 border-b border-white/10 rounded-t-2xl">Navigation</p>
               <br />
