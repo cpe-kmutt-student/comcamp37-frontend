@@ -105,6 +105,7 @@ export function RegisterProvider({ children }: { children: React.ReactNode }) {
     const [allData, setAllData] = useState<Partial<FormData>>({});
     const [isLoaded, setIsLoaded] = useState(false);
     const { studentInfo } = useStudent();
+    const { user } = useUser();
 
     useEffect(() => {
         const safeDecode = (value: any) => {
@@ -211,8 +212,10 @@ export function RegisterProvider({ children }: { children: React.ReactNode }) {
                 if (savedData) {
                     try {
                         const parsed = JSON.parse(savedData);
-                        if (parsed.allData) setAllData(parsed.allData);
-                        if (parsed.step) setStep(parsed.step);
+                        if (parsed.email == user?.email) {
+                            if (parsed.allData) setAllData(parsed.allData);
+                            if (parsed.step) setStep(parsed.step);
+                        }
                     } catch (e) { console.error(e); }
                 }
             }
@@ -225,7 +228,7 @@ export function RegisterProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem("comcamp37_reg_input", JSON.stringify({ step, allData }));
+            localStorage.setItem("comcamp37_reg_input", JSON.stringify({ step, allData, email: user?.email }));
         }
     }, [allData, step, isLoaded]);
 
@@ -255,6 +258,7 @@ export default function RegisterContent() {
 function Step1() {
     const { next, setAllData, allData } = useContext(RegisterCtx)
     const { user } = useUser();
+    const { studentStatus } = useStudent();
     const router = useRouter()
 
     const form = useForm<RegisterFormValues>({
@@ -564,7 +568,7 @@ function Step1() {
                                             <Input
                                                 // Add 'pl-10' to make room for the icon on the left
                                                 className="py-6 pl-4 pr-10 rounded-xl"
-                                                placeholder="08X-XXX-XXXX"
+                                                placeholder="0XX-XXX-XXXX"
                                                 {...field}
                                                 value={formatPhoneNumber(field.value)}
                                                 onChange={(e) => {
@@ -631,14 +635,7 @@ function Step1() {
                 </div>
 
                 {/* Navigation Buttons */}
-                <div className="p-6 md:p-8 border-t border-slate-800 bg-slate-900/50 flex flex-col-reverse sm:flex-row justify-between gap-4">
-                    <Button
-                        type="button"
-                        className="px-4 py-5 font-bold rounded-xl  bg-slate-900 text-white hover:bg-slate-700 focus:ring-offset-slate-900"
-                        onClick={() => router.push('/application')}
-                    >
-                        ยกเลิก
-                    </Button>
+                <div className="p-6 md:p-8 border-t border-slate-800 bg-slate-900/50 flex flex-col-reverse sm:flex-row-reverse justify-between gap-4">
                     <Button
                         type="submit"
                         className="px-8 py-5 font-bold rounded-xl bg-primary hover:bg-primary/90 focus:ring-offset-slate-900"
@@ -647,6 +644,17 @@ function Step1() {
                         ถัดไป
                         <FontAwesomeIcon icon={faArrowRight}/>
                     </Button>
+                    { (studentStatus?.std_status_info_done == true) && (
+                    <Button
+                        type="button"
+                        className="px-4 py-5 font-bold rounded-xl  bg-slate-900 text-white hover:bg-slate-700 focus:ring-offset-slate-900"
+                        onClick={() => router.push('/application')}
+                    >
+                        ยกเลิก
+                    </Button>
+                    )
+                    }
+
                 </div>
             </form>
         </Form>
@@ -1310,7 +1318,7 @@ function Step3() {
                                 <FormItem className="col-span-1">
                                     <FormLabel>ชื่อผู้ปกครอง</FormLabel>
                                     <FormControl>
-                                        <Input className="py-6 px-4 rounded-xl" placeholder="เช่น หม่ามี๊ ก๊าบก๊าบ" {...field} />
+                                        <Input className="py-6 px-4 rounded-xl" placeholder="" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -1348,7 +1356,7 @@ function Step3() {
                                             <Input
                                                 // Add 'pl-10' to make room for the icon on the left
                                                 className="py-6 pl-4 pr-10 rounded-xl"
-                                                placeholder="08X-XXX-XXXX"
+                                                placeholder="0XX-XXX-XXXX"
                                                 {...field}
                                                 value={formatPhoneNumber(field.value)}
                                                 onChange={(e) => {
