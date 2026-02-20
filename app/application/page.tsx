@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image';
-import { motion } from "motion/react"
+import {AnimatePresence, motion} from "motion/react"
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
@@ -22,68 +22,12 @@ import {Button} from "@/components/ui/button";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Spinner} from "@/components/ui/spinner";
-
-interface TimerStatus {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-    isUrgent: boolean;
-    isExpired: boolean | null;
-}
+import {REGIS_EXPIRED_DATE, TimerStatus, useCountdown} from "@/app/application/countdown";
+import {toast} from "sonner";
 
 interface CountdownLabelProps {
     status: TimerStatus;
 }
-
-interface MissionOverlayProps {
-    isExpired: boolean | null | undefined;
-}
-
-const useCountdown = (targetDate:string) => {
-    const [status, setStatus] = useState<TimerStatus>({
-        days: 0, hours: 0, minutes: 0, seconds: 0,
-        isUrgent: false, isExpired: false
-    });
-
-    useEffect(() => {
-        const diff:number = new Date(targetDate).getTime() - new Date().getTime();
-        if (diff <= 0) {
-            setStatus(prev => ({ ...prev, isExpired: true }));
-        } else {
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            setStatus({
-                days,
-                hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-                minutes: Math.floor((diff / 1000 / 60) % 60),
-                seconds: Math.floor((diff / 1000) % 60),
-                isUrgent: days < 1,
-                isExpired: false
-            });
-        }
-
-        const timer = setInterval(() => {
-            const diff:number = new Date(targetDate).getTime() - new Date().getTime();
-            if (diff <= 0) {
-                setStatus(prev => ({ ...prev, isExpired: true }));
-                clearInterval(timer);
-            } else {
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                setStatus({
-                    days,
-                    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-                    minutes: Math.floor((diff / 1000 / 60) % 60),
-                    seconds: Math.floor((diff / 1000) % 60),
-                    isUrgent: days < 1,
-                    isExpired: false
-                });
-            }
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [targetDate]);
-
-    return status;
-};
 
 const CountdownLabel: React.FC<CountdownLabelProps> = ({ status }) => {
     if (status.isExpired) return null; // หมดเวลาแล้วไม่ต้องโชว์ตัวเลข
@@ -103,13 +47,42 @@ const CountdownLabel: React.FC<CountdownLabelProps> = ({ status }) => {
     );
 };
 
-const MissionOverlay: React.FC<MissionOverlayProps> = ({ isExpired }) => {
-    if (!isExpired) return null;
+const MissionOverlay: React.FC<{ status: ApplicationStatus }> = ({ status }) => {
+    const overlayContent = {
+        INCOMPLETE: null,
+        READY: null,
+        SUBMITTED: 'ส่งใบสมัครเรียบร้อยแล้ว',
+        EXPIRED: 'หมดเขตรับสมัครแล้ว',
+    };
+
+    const text = overlayContent[status];
+
+    if (!text) return null;
 
     return (
-        <div className="absolute z-30 rounded-xl left-0 top-0 backdrop-blur-lg backdrop-brightness-75 inset-0 flex items-center justify-center">
-            <span className="font-bold text-white text-2xl shadow-xs">หมดเขตรับสมัครแล้ว</span>
-        </div>
+        <AnimatePresence>
+            {text && (
+                <motion.div
+                    // ตั้งค่าแอนิเมชันของพื้นหลัง (Fade in/out)
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute z-31 rounded-xl left-0 top-0 backdrop-blur-lg backdrop-brightness-75 inset-0 flex items-center justify-center"
+                >
+                    <motion.span
+                        // ตั้งค่าแอนิเมชันของตัวหนังสือ (เด้งดึ๋งนิดๆ ตอนโผล่มา)
+                        initial={{ scale: 0.8, opacity: 0, y: 10 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ scale: 0.8, opacity: 0, y: 10 }}
+                        transition={{ type: "spring", bounce: 0.4, duration: 0.5, delay: 0.1 }}
+                        className="font-bold text-white text-2xl shadow-xs drop-shadow-md drop-shadow-black"
+                    >
+                        {text}
+                    </motion.span>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 };
 
@@ -122,12 +95,181 @@ const formatPhoneNumber = (value: string) => {
     return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
 };
 
-export default function applicationHome() {
-    const { user, isLoading, session, signOut } = useUser();
-    const router = useRouter();
-    const { hasApplication, createApplication, studentStatus, studentInfo, applicationId, studentFaceImage } = useStudent();
+export type ApplicationStatus = 'INCOMPLETE' | 'READY' | 'SUBMITTED' | 'EXPIRED';
 
-    const statusExpired = useCountdown("2026-02-23T23:59:59");
+interface ApplicationCardProps {
+    status: ApplicationStatus;
+    loading: boolean;
+    onSubmit?: () => void;
+}
+
+function ApplicationCard({ status, loading, onSubmit }: ApplicationCardProps) {
+    const statusConfig = {
+        INCOMPLETE: {
+            title: 'ภารกิจยังไม่สำเร็จ',
+            description: 'คุณยังกรอกข้อมูลหรือแนบเอกสารไม่ครบถ้วน',
+            buttonText: 'รอการดำเนินการ',
+            buttonClass: 'bg-slate-600 hover:bg-slate-600 cursor-not-allowed opacity-70',
+            isDisabled: true,
+            imgClass: 'opacity-50',
+        },
+        READY: {
+            title: 'ภารกิจเสร็จสิ้น',
+            description: 'ใบสมัครของคุณพร้อมแล้ว โปรดตรวจสอบข้อมูลก่อนกดส่งใบสมัคร',
+            buttonText: 'ส่งใบสมัคร',
+            buttonClass: 'bg-primary hover:bg-primary/90 cursor-pointer',
+            isDisabled: false,
+            imgClass: '',
+        },
+        SUBMITTED: {
+            title: 'ส่งใบสมัครเรียบร้อยแล้ว',
+            description: 'ระบบได้รับใบสมัครของคุณแล้ว รอติดตามผลการคัดเลือกได้เลย!',
+            buttonText: 'ส่งข้อมูลสำเร็จ',
+            buttonClass: 'hidden',
+            isDisabled: true,
+            imgClass: '',
+        },
+        EXPIRED: {
+            title: 'หมดเวลารับสมัคร',
+            description: 'ขออภัย หมดเขตรับสมัครแล้ว',
+            buttonText: 'หมดเวลา',
+            buttonClass: 'bg-slate-600 hover:bg-slate-600 cursor-not-allowed opacity-70',
+            isDisabled: true,
+            imgClass: 'grayscale opacity-50',
+        },
+    };
+
+    const current = statusConfig[status];
+
+    return (
+        <div className="hidden md:flex flex-row gap-x-10 col-span-3 row-span-1 bg-slate-900 rounded-xl shadow-sm px-10 py-8 justify-evenly align-middle items-center">
+            <Image
+                src={`${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/docsIcon.png`}
+                alt="Document Icon"
+                loading="eager"
+                width={0}
+                height={0}
+                sizes="100vw"
+                unoptimized
+                className={`relative w-30 scale-135 rotate-20 transition-all duration-300 ${current.imgClass}`}
+            />
+            <div className="flex-1 h-full flex flex-col justify-evenly gap-4">
+                <div>
+                    <div className="text-2xl font-bold text-white transition-colors duration-300">
+                        {current.title}
+                    </div>
+                    <div className="text-lg text-slate-300 mt-2 transition-colors duration-300">
+                        {current.description}
+                    </div>
+                </div>
+                <Button
+                    type="button"
+                    disabled={current.isDisabled || loading}
+                    onClick={status === 'READY' ? onSubmit : undefined}
+                    className={`h-12 w-full text-lg font-bold rounded-xl transition-all duration-300 ${current.buttonClass}`}
+                >
+                    {loading ? 'กำลังส่งใบสมัคร...' : current.buttonText}
+                </Button>
+            </div>
+        </div>
+    );
+}
+
+function ApplicationCardMD({ status, loading, onSubmit }: ApplicationCardProps) {
+    const statusConfig = {
+        INCOMPLETE: {
+            title: 'ภารกิจยังไม่สำเร็จ',
+            description: 'คุณยังกรอกข้อมูลหรือแนบเอกสารไม่ครบถ้วน',
+            buttonText: 'รอการดำเนินการ',
+            buttonClass: 'bg-slate-600 hover:bg-slate-600 cursor-not-allowed opacity-70',
+            isDisabled: true,
+            imgClass: 'opacity-50',
+        },
+        READY: {
+            title: 'ภารกิจสำเร็จ',
+            description: 'ใบสมัครของคุณพร้อมแล้ว โปรดตรวจสอบข้อมูลก่อนกดส่งใบสมัคร',
+            buttonText: 'ส่งใบสมัคร',
+            buttonClass: 'bg-primary hover:bg-primary/90 cursor-pointer',
+            isDisabled: false,
+            imgClass: '',
+        },
+        SUBMITTED: {
+            title: 'ส่งใบสมัครเรียบร้อยแล้ว',
+            description: 'ระบบได้รับใบสมัครของคุณแล้ว รอติดตามผลการคัดเลือกได้เลย!',
+            buttonText: 'ส่งข้อมูลสำเร็จ',
+            buttonClass: 'hidden',
+            isDisabled: true,
+            imgClass: '',
+        },
+        EXPIRED: {
+            title: 'หมดเวลารับสมัคร',
+            description: 'ขออภัย หมดเขตรับสมัครแล้ว',
+            buttonText: 'หมดเวลา',
+            buttonClass: 'bg-slate-600 hover:bg-slate-600 cursor-not-allowed opacity-70',
+            isDisabled: true,
+            imgClass: 'grayscale opacity-50',
+        },
+    };
+
+    const current = statusConfig[status];
+
+    return (
+        <div className="flex bg-slate-900 rounded-xl shadow-sm p-6 flex-col items-center gap-y-10">
+            <Image
+                src={`${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/docsIcon.png`}
+                alt="Document Icon"
+                loading="eager"
+                width={0}
+                height={0}
+                sizes="100vw"
+                unoptimized
+                className={`relative w-[50%] rotate-20 transition-all duration-300 ${current.imgClass}`}
+            />
+            <div className="w-full h-full flex flex-col justify-evenly gap-4">
+                <div>
+                    <div className="text-2xl font-bold text-white transition-colors duration-300">
+                        {current.title}
+                    </div>
+                    <div className="text-lg text-slate-300 mt-2 transition-colors duration-300">
+                        {current.description}
+                    </div>
+                </div>
+                <Button
+                    type="button"
+                    disabled={current.isDisabled || loading}
+                    onClick={status === 'READY' ? onSubmit : undefined}
+                    className={`h-14 w-full text-lg font-bold rounded-xl transition-all duration-300 ${current.buttonClass}`}
+                >
+                    {loading ? 'กำลังส่งใบสมัคร...' : current.buttonText}
+                </Button>
+            </div>
+        </div>
+    );
+}
+
+export default function applicationHome() {
+    const { user, isLoading } = useUser();
+    const router = useRouter();
+    const { studentStatus, studentInfo, studentFaceImage, ApplicationStatus, refreshApplication } = useStudent();
+
+    const [isSubmitLoading, setSubmitLoading] = useState(false);
+
+    const statusExpired = useCountdown(REGIS_EXPIRED_DATE);
+    let currentStatus: ApplicationStatus = 'INCOMPLETE';
+
+    if (ApplicationStatus?.std_application_submit == true) {
+        currentStatus = "SUBMITTED"
+    } else if (statusExpired.isExpired) {
+        currentStatus = 'EXPIRED';
+    } else if (
+        studentStatus?.std_status_info_done &&
+        studentStatus.std_status_file_done &&
+        studentStatus.std_status_regis_question_done &&
+        studentStatus.std_status_academic_question_done &&
+        studentStatus.std_status_academic_chaos_done
+    ) {
+        currentStatus = "READY"
+    }
 
     const myMissions: Mission[] = [
         { id: 1, status: `${ studentStatus?.std_status_info_done ? 'completed' : 'current' }`, label: 'ทะเบียนประวัติ', icon: faUser, action: () => {router.push('/application/register')} },
@@ -141,6 +283,27 @@ export default function applicationHome() {
         return (<div></div>)
     }
 
+    const handleSubmitApplication = async () => {
+        setSubmitLoading(true);
+        try {
+            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/application/submit`,
+                {},
+                { withCredentials: true }
+            );
+
+            await refreshApplication();
+
+            toast.success("ส่งเรียบร้อยแล้ว");
+        } catch (error: any) {
+            console.error(error);
+            toast.error("ส่งไม่สำเร็จ", {
+                description: error.response?.data?.message || "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์",
+            });
+        } finally {
+            setSubmitLoading(false);
+        }
+    };
+
     return (
         <>
         <main className="flex-1 w-full max-w-[1280px] mx-auto py-3 px-3 md:px-6 flex flex-col gap-3 md:gap-5 mt-5 md:mt-0">
@@ -151,14 +314,14 @@ export default function applicationHome() {
                     <HorizontalMissionPath missions={myMissions}/>
                 </div>
                 <div className="md:h-[250px] w-full relative bg-slate-900 rounded-xl shadow-sm px-7 py-5">
-                    <MissionOverlay isExpired={statusExpired.isExpired} />
-                    <div className="text-2xl font-bold z-31 absolute bg-slate-900 pb-3">ภารกิจของคุณ <FontAwesomeIcon icon={faMapLocationDot} /></div>
+                    <MissionOverlay status={currentStatus} />
+                    <div className="text-2xl font-bold z-30 absolute bg-slate-900 pb-3">ภารกิจของคุณ <FontAwesomeIcon icon={faMapLocationDot} /></div>
                     <div className="block md:hidden">
                         <div className="backdrop-blur-md rounded-2xl shadow-xl py-4">
                             <VerticalMissionPath missions={myMissions} />
                         </div>
                     </div>
-                    <CountdownLabel status={statusExpired} />
+                    <CountdownLabel status={statusExpired}/>
                 </div>
 
             </div>
@@ -175,7 +338,7 @@ export default function applicationHome() {
                             className="relative z-10 w-full h-full bg-slate-700 border-white border border-5 rounded-full object-cover object-top"
                         />
                         <Image
-                            src="/RabbitEars.png"
+                            src={`${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/RabbitEars.png`}
                             alt=""
                             loading="eager"
                             width={800}
@@ -207,35 +370,13 @@ export default function applicationHome() {
 
                 </div>
 
-                <div className="hidden md:flex col-span-3 row-span-1 bg-slate-900 rounded-xl shadow-sm p-5 flex-col justify-center align-middle items-center">
-
-                    <Button
-                        type="button"
-                        className="h-[40%] w-[50%] text-lg font-bold rounded-xl bg-primary hover:bg-primary/90"
-                    >
-                        ส่งใบสมัคร
-                    </Button>
-
+                <ApplicationCard status={currentStatus} onSubmit={handleSubmitApplication} loading={isSubmitLoading}></ApplicationCard>
+                <div className="hidden md:flex flex-row gap-x-10 col-span-3 row-span-1 bg-slate-900 rounded-xl shadow-sm px-10 py-8 justify-evenly align-middle items-center">
                 </div>
 
-                <div className="hidden md:flex col-span-3 row-span-1 bg-slate-900 rounded-xl shadow-sm p-5 flex-col justify-center align-middle items-center">
-
-
-
-                </div>
             </div>
             <div className="grid md:hidden grid-cols-1 grid-rows-none md:grid-cols-5 md:grid-rows-2 gap-y-5 md:gap-5 order-3">
-
-                <div className="flex col-span-3 row-span-1 bg-slate-900 rounded-xl shadow-sm p-6 flex-col justify-center align-middle items-center">
-
-                    <Button
-                        type="button"
-                        className="px-12 py-7 font-bold rounded-xl bg-primary hover:bg-primary/90"
-                    >
-                        ส่งใบสมัคร
-                    </Button>
-
-                </div>
+                <ApplicationCardMD status={currentStatus} onSubmit={handleSubmitApplication} loading={isSubmitLoading}></ApplicationCardMD>
             </div>
         </main>
         </>

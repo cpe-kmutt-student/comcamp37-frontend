@@ -12,12 +12,17 @@ import {StudentProvider, useStudent} from "@/contexts/StudentContext";
 import { motion } from 'motion/react'
 import {Button} from "@/components/ui/button";
 import * as React from "react";
+import {REGIS_EXPIRED_DATE, useCountdown} from "@/app/application/countdown";
 
 function AuthGate({ children }: { children: React.ReactNode }) {
     const { user, isLoading } = useUser();
+    const { studentStatus } = useStudent();
+    const { } = useStudent();
     const router = useRouter();
     const pathname = usePathname();
-    const { isLoadingApp } = useStudent();
+    const { isLoadingApp, ApplicationStatus } = useStudent();
+
+    const { isExpired } = useCountdown(REGIS_EXPIRED_DATE);
 
     const isPublicRoute = pathname === "/signin" || pathname === "/privacy";
 
@@ -26,6 +31,27 @@ function AuthGate({ children }: { children: React.ReactNode }) {
             router.replace('/signin');
         }
     }, [user, isLoading, router, pathname, isPublicRoute]);
+
+    useEffect(() => {
+
+        const restrictedPaths = [
+            "/application/file",
+            "/application/question-academic",
+            "/application/question-aptitude",
+            "/application/question-regis",
+            "/application/register"
+        ];
+
+        if ((isExpired && restrictedPaths.includes(pathname)) || (ApplicationStatus?.std_application_submit && restrictedPaths.includes(pathname))) {
+            router.replace('/application');
+            return;
+        }
+
+        if (!isLoading && (studentStatus?.std_status_info_done == false) && !(pathname == "/application/register")) {
+            router.replace('/application/register');
+        }
+
+    }, [studentStatus, pathname]);
 
     if ((isLoading || isLoadingApp) && !isPublicRoute) {
         return <LoadingScreen/>;
@@ -56,10 +82,10 @@ export default function RootLayout({
 }
 
 function NoApp() {
-    const { hasApplication, createApplication } = useStudent();
+    const { hasApplication, createApplication  } = useStudent();
     const { user, signOut } = useUser();
     const router = useRouter();
-    if (!hasApplication) {
+    if ( !hasApplication ) {
     return (
         <div className="w-full h-full fixed top-0 bg-theme-primary-darken/90 backdrop-blur-xl flex flex-col justify-center items-center z-100">
 

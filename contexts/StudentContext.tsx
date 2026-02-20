@@ -15,6 +15,15 @@ export interface StudentStatus {
     std_status_payment_done: boolean;
 }
 
+export interface ApplicationStatus {
+    std_application_id: string;
+    std_application_submit: boolean;
+    std_application_confirm: boolean;
+    std_application_abort_reason: null;
+    std_application_pass: false;
+    std_application_result: string;
+}
+
 export interface StudentInfo {
     std_application_id: string,
     std_info_prefix: string,
@@ -83,6 +92,7 @@ interface StudentAcademicChaosAnswer {
 interface StudentContextType {
     applicationId: string | null; // เก็บแค่ ID
     studentStatus: StudentStatus | null; // เก็บแค่ Status Object
+    ApplicationStatus: ApplicationStatus | null;
     studentInfo: StudentInfo | null;
     studentRegisAnswer: StudentRegisAnswer[] | null;
     studentAcademicAnswer: StudentAcademicAnswer[] | null;
@@ -101,6 +111,7 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
 
     // แยก State เก็บ ID และ Status
     const [applicationId, setApplicationId] = useState<string | null>(null);
+    const [appStatus, setAppStatus] = useState<ApplicationStatus | null>(null);
     const [status, setStatus] = useState<StudentStatus | null>(null);
     const [stdInfo, setStdInfo] = useState<StudentInfo | null>(null);
 
@@ -120,43 +131,49 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
         }
 
         try {
-            // ไม่ต้อง set loading true ตรงนี้ เพื่อไม่ให้หน้ากระพริบถ้ารีเฟรชเงียบๆ
             const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/student/application`, { withCredentials: true });
 
-            // API Get All return Array [] -> เราเอาตัวแรก
             if (res.data && res.data.length > 0) {
                 const appData = res.data[0];
                 setApplicationId(appData.std_application_id);
                 setStatus(appData.std_status);
+                setAppStatus(appData);
                 setStdInfo(appData.std_info);
 
-                setRegisAns(appData.std_regis_question)
-                setAcademicAns(appData.std_academic_question)
-                setAcademicChaosAns(appData.std_academic_chaos_question)
+                setRegisAns(appData.std_regis_question);
+                setAcademicAns(appData.std_academic_question);
+                setAcademicChaosAns(appData.std_academic_chaos_question);
 
                 await fetchFaceImage(appData.std_application_id);
-
-                console.log(appData.std_info)
-                console.log(appData.std_status)
             } else {
                 setApplicationId(null);
                 setStatus(null);
+                setAppStatus(null);
                 setStdInfo(null);
-
                 setRegisAns(null);
                 setAcademicAns(null);
                 setAcademicChaosAns(null);
             }
-        } catch (error) {
-            console.error("Failed to fetch application:", error);
-            setApplicationId(null);
-            setStatus(null);
-            setStdInfo(null);
-            setRegisAns(null);
-            setAcademicAns(null);
-            setAcademicChaosAns(null);
-        } finally {
             setIsLoadingApp(false);
+
+        } catch (error:any) {
+            console.error("Failed to fetch application:", error);
+            if (error.response && error.response.status === 404) {
+                setApplicationId(null);
+                setStatus(null);
+                setAppStatus(null);
+                setStdInfo(null);
+                setRegisAns(null);
+                setAcademicAns(null);
+                setAcademicChaosAns(null);
+
+                setIsLoadingApp(false);
+            } else {
+                console.log(`Error ${error.response?.status || 'Unknown'}: กำลังลองใหม่ใน 3 วินาที...`);
+                setTimeout(() => {
+                    fetchApplication();
+                }, 3000);
+            }
         }
     };
 
@@ -197,6 +214,7 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
             if (newApp) {
                 setApplicationId(newApp.std_application_id);
                 setStatus(newApp.std_status);
+                setAppStatus(newApp);
                 setStdInfo(newApp.std_info);
                 setRegisAns(newApp.std_regis_question)
                 setAcademicAns(newApp.std_academic_question)
@@ -215,6 +233,7 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
     const value = {
         applicationId,
         studentStatus: status,
+        ApplicationStatus: appStatus,
         studentInfo: stdInfo,
         studentRegisAnswer: regisAns,
         studentAcademicAnswer: academicAns,

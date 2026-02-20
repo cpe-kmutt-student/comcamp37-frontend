@@ -63,7 +63,7 @@ export default function SignInPage() {
     }, [user]);
 
     return (
-        <div className='flex flex-col items-center justify-center h-dvh px-15 overflow-hidden'>
+        <div className='absolute top-0 w-full flex flex-col items-center justify-center h-dvh pt-20 px-15 overflow-hidden'>
             <motion.div
                 className='flex flex-col w-full max-w-[340px] items-center text-center mx-5'
                 variants={containerVariants}
@@ -72,7 +72,7 @@ export default function SignInPage() {
                 viewport={{ once: true }}
             >
 
-                <div className="w-full h-auto relative mb-8 select-none">
+                <div className="w-full h-auto relative mb-8 drop-shadow-xl drop-shadow-black/40 select-none">
                     <motion.div variants={bgVariants} className="relative z-0">
                         <Image
                             className="drop-shadow-2xl"
