@@ -61,7 +61,7 @@ function NoApp() {
     const router = useRouter();
     if (!hasApplication) {
     return (
-        <div className="w-full h-full fixed top-0 bg-theme-primary-darken/90 backdrop-blur-xl z-50 flex flex-col justify-center items-center">
+        <div className="w-full h-full fixed top-0 bg-theme-primary-darken/90 backdrop-blur-xl flex flex-col justify-center items-center z-100">
 
             <motion.div
                 initial={{ scale: 0.9, y: 20 }}

@@ -12,7 +12,7 @@ import {useUser} from "@/contexts/UserContext";
 const loginWithGoogle = async () => {
     await authClient.signIn.social({
         provider: "google",
-        callbackURL: "http://localhost:3000/application"
+        callbackURL: `${process.env.NEXT_PUBLIC_SERVER_URL}/application`
     })
 }
 export default function SignInPage() {
