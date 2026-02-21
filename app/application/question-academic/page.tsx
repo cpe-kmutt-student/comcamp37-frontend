@@ -68,31 +68,37 @@ const questions = [
                 7. น้องจะต้องบังคับหุ่นยนต์ให้เก็บซากหุ่นต่าง ๆ ในพื้นที่ ไปไว้ที่จุด Checkpoint 2 จุดที่แตกต่างกันสำหรับหุ่นยนต์แต่ละประเภท ถ้าหากวางในที่ที่ผิดประเภท จะโดนหักคะแนน โดยจะเก็บครั้งละกี่ตัวก็ได้ และจะต้องเก็บให้ได้มากที่สุดภายในระยะเวลาที่จำกัด (ขยะชิ้นใหญ่และขยะชิ้นเล็กจะได้คะแนนแตกต่างกัน ขยะชิ้นใหญ่จะได้คะแนนมากกว่าชิ้นเล็ก แต่ถ้าวางชิ้นใหญ่ผิดประเภทก็จะลบคะแนนมากกว่าเช่นกัน) <br />
                 <br /><strong className="font-lg/4">พี่ ๆ มีหุ่นยนต์มาให้น้องเลือก 2 ตัว ในการเอาไปทำภารกิจ เก็บซากหุ่นยนต์ โดยให้น้องเลือกหุ่นยนต์ตัวใดตัวหนึ่ง และอธิบายว่าทำไมน้องถึงเลือกหุ่นยนต์ตัวนั้น รวมถึงวิธีการที่น้องจะทำภารกิจนี้ให้สำเร็จ</strong><br />
                 {/* ยังไม่ได้เพอ่มรูปน้า */}
+                
                 <div className='flex flex-row [&>div]:mx-5 my-3 flex-1 gap-5'>
+
                     <div className='flex flex-col flex-1'> 
-        <strong className="text-lg">หุ่นยนต์ A</strong>
-        <p className="text-sm min-h-[60px] mt-1"> 
-            Code name: สาส์นจากสวรรค์หุ่นยนต์ผู้ซึ่งปลดแอกจากการจองจำของปีศาจจากขุมนรก
-        </p>
-        <img 
-            src="https://storage.comcamp.io/web-assets/exam/robotA.png" 
-            className='w-full aspect-square object-cover rounded-md mt-2' 
-            alt="Robot A"
-        />
-    </div>
+
+                        <strong className="text-lg">หุ่นยนต์ A</strong>
+                        <p className="text-sm flex-1 mt-1"> 
+                            Code name: สาส์นจากสวรรค์หุ่นยนต์ผู้ซึ่งปลดแอกจากการจองจำของปีศาจจากขุมนรก
+                        </p>
+
+                        <img 
+                            src="https://storage.comcamp.io/web-assets/exam/robotA.png" 
+                            className='w-full aspect-square object-cover rounded-md mt-2' 
+                            alt="Robot A"
+                        />
+
+                    </div>
 
 
-    <div className='flex flex-col flex-1'>
-        <strong className="text-lg">หุ่นยนต์ B</strong>
-        <p className="text-sm min-h-[60px] mt-1">
-            Code name: ราชาปีศาจหุ่นยนต์ผู้ซึ่งทำลายล้างทุกสิ่งผู้ที่ปกครองทุกอย่างผู้ที่เกิดมาเพื่อสร้างความโกลาหลแก่โลกใบนี้
-        </p>
-        <img 
-            src="https://storage.comcamp.io/web-assets/exam/robotB.png" 
-            className='w-full aspect-square object-cover rounded-md mt-2' 
-            alt="Robot B"
-        />
-    </div></div>
+                    <div className='flex flex-col flex-1'>
+                        <strong className="text-lg">หุ่นยนต์ B</strong>
+                        <p className="text-sm flex-1 mt-1">
+                            Code name: ราชาปีศาจหุ่นยนต์ผู้ซึ่งทำลายล้างทุกสิ่งผู้ที่ปกครองทุกอย่างผู้ที่เกิดมาเพื่อสร้างความโกลาหลแก่โลกใบนี้
+                        </p>
+                        <img 
+                            src="https://storage.comcamp.io/web-assets/exam/robotB.png" 
+                            className='w-full aspect-square object-cover rounded-md mt-2' 
+                            alt="Robot B"
+                        />
+                    </div>
+                </div>
                 
             </span>
         </div>
