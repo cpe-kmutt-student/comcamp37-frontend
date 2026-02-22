@@ -27,8 +27,8 @@ function Footer() {
     useEffect(() => {
         const metaTheme = document.querySelector('meta[name="theme-color"]');
 
-        const footerColor = '#151E3D';
-        const primaryColor = '#1F456E';
+        const footerColor = '#1C3071';
+        const primaryColor = '#014AAD';
 
         if (!isIOS) {return}
 
