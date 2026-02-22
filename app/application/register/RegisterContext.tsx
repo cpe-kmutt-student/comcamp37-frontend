@@ -389,7 +389,11 @@ function Step1() {
                                             </div>
                                             </FormLabel>
                                     <FormControl>
-                                        <Input className="py-6 px-4 rounded-xl" placeholder="ชื่อจริง" {...field} />
+                                        <Input className="py-6 px-4 rounded-xl" placeholder="ชื่อจริง" {...field}
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/\d/g, ""); 
+                                            field.onChange(value);
+                                        }}  />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -407,7 +411,11 @@ function Step1() {
                                             นามสกุล
                                             </div></FormLabel>
                                     <FormControl>
-                                        <Input className="py-6 px-4 rounded-xl" placeholder="นามสกุล" {...field} />
+                                        <Input className="py-6 px-4 rounded-xl" placeholder="นามสกุล" {...field}
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/\d/g, ""); 
+                                            field.onChange(value);
+                                        }} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -1387,7 +1395,11 @@ function Step3() {
                                             ชื่อผู้ปกครอง
                                             </div></FormLabel>
                                     <FormControl>
-                                        <Input className="py-6 px-4 rounded-xl" placeholder="" {...field} />
+                                        <Input className="py-6 px-4 rounded-xl" placeholder="" {...field} 
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/\d/g, ""); 
+                                            field.onChange(value);
+                                        }}/>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -1588,7 +1600,7 @@ function Step3() {
 
                                     <FormLabel><div className="relative">
                                             <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
-                                            สะดวกนำ iPad/Tablet มาไหม
+                                            สะดวกนำ Tablet มาไหม (เช่น iPad, Samsung Galaxy Tab S series, ฯลฯ)
                                             </div></FormLabel>
                                     <FormControl>
                                         <RadioGroup
