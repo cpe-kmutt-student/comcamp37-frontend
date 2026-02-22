@@ -353,7 +353,7 @@ function Step1() {
                                 <FormItem className="col-span-1 md:col-span-2">
                                     <FormLabel>
                                         <div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             คำนำหน้าชื่อ
                                             </div>
                                             </FormLabel>
@@ -384,7 +384,7 @@ function Step1() {
                                 <FormItem className="col-span-1 md:col-span-5">
                                     <FormLabel>
                                         <div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ชื่อจริง
                                             </div>
                                             </FormLabel>
@@ -403,7 +403,7 @@ function Step1() {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 md:col-span-5">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             นามสกุล
                                             </div></FormLabel>
                                     <FormControl>
@@ -424,7 +424,7 @@ function Step1() {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 md:col-span-6">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ชื่อเล่น
                                             </div></FormLabel>
                                     <FormControl>
@@ -442,7 +442,7 @@ function Step1() {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 md:col-span-6">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             วันเดือนปีเกิด
                                             </div></FormLabel>
                                     <Popover>
@@ -493,7 +493,7 @@ function Step1() {
                                 <FormItem className="col-span-1 md:col-span-6">
 
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             เพศกำเนิด
                                             </div></FormLabel>
                                     {/* ส่วนตัวเลือก Radio */}
@@ -552,7 +552,7 @@ function Step1() {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 md:col-span-6">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ศาสนา
                                             </div></FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -586,7 +586,7 @@ function Step1() {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 md:col-span-6">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             เบอร์โทรศัพท์
                                             </div></FormLabel>
                                     <FormControl>
@@ -619,7 +619,7 @@ function Step1() {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 md:col-span-6">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             อีเมล
                                             </div></FormLabel>
                                     <FormControl>
@@ -649,7 +649,7 @@ function Step1() {
                             render={({ field }) => (
                                 <FormItem className="md:col-span-2">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ที่อยู่ปัจจุบัน
                                             </div></FormLabel>
                                     <FormControl>
@@ -801,7 +801,7 @@ function Step2() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ระดับชั้นการศึกษา
                                             </div> <span className="opacity-40">(ปีการศึกษา 2568)</span></FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -830,7 +830,7 @@ function Step2() {
                                 render={({ field }) => (
                                     <FormItem className={form.watch("academic_program") === "อื่น ๆ" ? "w-auto" : "w-full"}>
                                         <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             แผนการเรียน
                                             </div></FormLabel>
                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -882,7 +882,7 @@ function Step2() {
                             render={({ field }) => (
                                 <FormItem className="md:col-span-2">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ชื่อสถาบันการศึกษา
                                             </div></FormLabel>
                                     <FormControl>
@@ -914,7 +914,7 @@ function Step2() {
                             render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ผลการเรียนเฉลี่ยสะสม (GPAX)
                                             </div></FormLabel>
                                     <FormControl>
@@ -959,7 +959,7 @@ function Step2() {
                             render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             คณิตศาสตร์
                                             </div></FormLabel>
                                     <FormControl>
@@ -1004,7 +1004,7 @@ function Step2() {
                             render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             วิทยาศาสตร์
                                             </div></FormLabel>
                                     <FormControl>
@@ -1049,7 +1049,7 @@ function Step2() {
                             render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ภาษาอังกฤษ
                                             </div></FormLabel>
                                     <FormControl>
@@ -1108,7 +1108,7 @@ function Step2() {
                             render={({ field }) => (
                                 <FormItem className="space-y-1">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             หมู่เลือด
                                             </div></FormLabel>
                                     <FormControl>
@@ -1149,9 +1149,13 @@ function Step2() {
                                 name={item.id as any}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{!item.notreq ? (<div className="relative"><span className="absolute text-red-500 text-xl -left-3 -top-1">*</span></div>
-                                    ) : (
-                                        item.label)} {item.notreq ? (<span className="opacity-40">(ถ้ามี)</span>) : ""}</FormLabel>
+                                        <FormLabel>
+                                            {!item.notreq ?
+                                                (<div className="relative"><span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>{item.label}</div>
+                                            ) : (
+                                                    <div>item.label<span className="opacity-40">(ถ้ามี)</span></div>
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             {item.area ? (
                                                 <Textarea className="py-3 px-4 rounded-xl" placeholder={item.placeholder} rows={2} {...field}/>
@@ -1377,7 +1381,7 @@ function Step3() {
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ชื่อผู้ปกครอง
                                             </div></FormLabel>
                                     <FormControl>
@@ -1395,7 +1399,7 @@ function Step3() {
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ความสัมพันธ์กับผู้ปกครอง
                                             </div></FormLabel>
                                     <FormControl>
@@ -1416,7 +1420,7 @@ function Step3() {
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             เบอร์ติดต่อผู้ปกครอง
                                             </div></FormLabel>
                                     <FormControl>
@@ -1461,7 +1465,7 @@ function Step3() {
                                 <FormItem className="col-span-1">
 
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             เคยเข้าร่วม ComCamp ไหม
                                             </div></FormLabel>
                                     <FormControl>
@@ -1521,7 +1525,7 @@ function Step3() {
                                 <FormItem className="col-span-1">
 
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             สะดวกเข้าร่วมทุกวันไหม
                                             </div></FormLabel>
                                     <FormControl>
@@ -1581,7 +1585,7 @@ function Step3() {
                                 <FormItem className="col-span-1">
 
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             สะดวกนำ Laptop มาไหม
                                             </div></FormLabel>
                                     <FormControl>
@@ -1641,7 +1645,7 @@ function Step3() {
                                 <FormItem className="col-span-1">
 
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             สะดวกนำ Laptop มาไหม
                                             </div></FormLabel>
                                     <FormControl>
@@ -1701,7 +1705,7 @@ function Step3() {
                                 <FormItem className="col-span-1">
 
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             สะดวกนำเมาส์มาไหม
                                             </div></FormLabel>
                                     <FormControl>
@@ -1762,7 +1766,7 @@ function Step3() {
                                 render={({ field }) => (
                                     <FormItem className={(form.watch("availability_laptop") === "true") && ((form.watch("availability_laptopOS") === "อื่นๆ" || form.watch("availability_laptopOS") === "Linux")) ? "w-auto" : "w-full"}>
                                         <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             ระบบปฏิบัติการ (OS)
                                             </div></FormLabel>
                                         <Select disabled={form.watch("availability_laptop") === "false"} onValueChange={field.onChange} defaultValue={field.value}>
@@ -1813,7 +1817,7 @@ function Step3() {
                             render={({field}) => (
                                 <FormItem>
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             วิธีการเดินทางมาค่าย
                                             </div></FormLabel>
                                     <FormControl>
@@ -1830,9 +1834,8 @@ function Step3() {
                         />
                         <p className="md:col-span-2 text-xs text-[#94a3b8]">
                             <div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
-                                            เขียนอธิบายวิธีการมาค่ายของน้อง ทั้งนี้เพื่อให้พี่ค่ายสามารถวางแผนการอำนวยความสะดวกให้น้องได้อย่างเต็มที่
-                                            </div>
+                                เขียนอธิบายวิธีการมาค่ายของน้อง ทั้งนี้เพื่อให้พี่ค่ายสามารถวางแผนการอำนวยความสะดวกให้น้องได้อย่างเต็มที่
+                            </div>
                             <br/>
                             <br/>
                             ตัวอย่าง เดินทางจากบ้านพักด้วยรถโดยสารประจำทางสาย 75 ลงป้ายหน้ามหาวิทยาลัยฯ
@@ -1887,7 +1890,7 @@ function Step3() {
                             render={({ field }) => (
                                 <FormItem className="flex flex-col gap-4">
                                     <FormLabel><div className="relative">
-                                            <span className="absolute text-red-500 text-xl -left-3 -top-1">*</span>
+                                            <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
                                             เลือกขนาดเสื้อค่าย
                                             </div></FormLabel>
                                     <FormControl>
