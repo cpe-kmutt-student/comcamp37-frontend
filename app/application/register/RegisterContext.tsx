@@ -480,7 +480,7 @@ function Step1() {
                                                 selected={field.value}
                                                 onSelect={field.onChange}
                                                 disabled={(date) =>
-                                                    date > new Date("2012-12-31") || date < new Date("2006-01-01")
+                                                    date > new Date("2012-12-31") || date < new Date("2005-12-31")
                                                 }
                                                 locale={th}
                                                 captionLayout="dropdown"
@@ -1175,9 +1175,9 @@ function Step2() {
                                         </FormLabel>
                                         <FormControl>
                                             {item.area ? (
-                                                <Textarea className="py-3 px-4 rounded-xl" placeholder={item.placeholder} rows={2} {...field} maxLength={100} />
+                                                <Textarea className="py-3 px-4 rounded-xl" placeholder={item.placeholder} rows={2} {...field} maxLength={210} />
                                             ) : (
-                                                <Input className="py-6 px-4 rounded-xl" placeholder={item.placeholder} {...field} maxLength={100} />
+                                                <Input className="py-6 px-4 rounded-xl" placeholder={item.placeholder} {...field} maxLength={105} />
                                             )}
                                         </FormControl>
                                         <FormMessage />
@@ -1402,7 +1402,7 @@ function Step3() {
                                             ชื่อผู้ปกครอง
                                             </div></FormLabel>
                                     <FormControl>
-                                        <Input className="py-6 px-4 rounded-xl" placeholder="นายห่านน้อย คอยรัก" {...field} 
+                                        <Input className="py-6 px-4 rounded-xl" placeholder="นายห่านน้อย คอยรัก" {...field}
                                         onChange={(e) => {
                                             const value = e.target.value.replace(/\d/g, ""); 
                                             field.onChange(value);
@@ -1888,15 +1888,15 @@ function Step3() {
                                 </thead>
                                 <tbody className="divide-y divide-twilight-indigo-700/50">
                                 {[
-                                    { size: "SS", chest: "34", length: "25" },
-                                    { size: "S", chest: "36", length: "26" },
-                                    { size: "M", chest: "38", length: "27" },
-                                    { size: "L", chest: "40", length: "28" },
-                                    { size: "XL", chest: "42", length: "29" },
-                                    { size: "2XL", chest: "44", length: "30" },
-                                    { size: "3XL", chest: "46", length: "31" },
-                                    { size: "4XL", chest: "48", length: "32" },
-                                    { size: "5XL", chest: "50", length: "33" }
+                                    { size: "S", chest: "34", length: "25" },
+                                    { size: "M", chest: "38", length: "27.5" },
+                                    { size: "L", chest: "42", length: "28.5" },
+                                    { size: "XL", chest: "44", length: "29.5" },
+                                    { size: "2XL", chest: "46", length: "30" },
+                                    { size: "3XL", chest: "50", length: "30.5" },
+                                    { size: "4XL", chest: "52", length: "31" },
+                                    { size: "5XL", chest: "56", length: "31.5" },
+                                    { size: "6XL", chest: "60", length: "31.5" },
                                 ].map((item) => (
                                     <tr key={item.size} data-selected={item.size == form.getValues('apparel_size') ? 'true' : ''} className="bg-twilight-indigo-800/20 data-[selected=true]:bg-twilight-indigo-700 transition-colors">
                                         <td className="px-4 py-2 font-medium">{item.size}</td>
@@ -1923,7 +1923,7 @@ function Step3() {
                                             defaultValue={field.value}
                                             className="grid grid-cols-5 gap-3"
                                         >
-                                            {["SS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map((type) => (
+                                            {["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL"].map((type) => (
                                                 <div key={type} className="peer sr-onl">
                                                     <RadioGroupItem value={type} id={`apparel_size-${type}`} className="peer sr-only" />
                                                     <Label

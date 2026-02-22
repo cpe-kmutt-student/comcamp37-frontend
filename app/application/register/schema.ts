@@ -3,12 +3,22 @@ import { z } from "zod";
 // --- Helper สำหรับตรวจสอบเบอร์โทร (10 หลัก) ---
 const phoneRegex = /^0\d{9}$/;
 
+const thaiRegex = /^[ก-๙\s]+$/;
+
 // --- Step 1: ข้อมูลส่วนตัว ---
 export const Step1Schema = z.object({
     name_prefix: z.string().min(1, "กรุณาเลือก"),
-    name_first: z.string().min(1, "กรุณาระบุชื่อจริง"),
-    name_last: z.string().min(1, "กรุณาระบุนามสกุล"),
-    name_nick: z.string().min(1, "กรุณาระบุชื่อเล่น"),
+    name_first: z.string()
+        .min(1, "กรุณาระบุชื่อจริง")
+        .regex(thaiRegex, "กรุณาระบุเป็นภาษาไทยเท่านั้น"),
+
+    name_last: z.string()
+        .min(1, "กรุณาระบุนามสกุล")
+        .regex(thaiRegex, "กรุณาระบุเป็นภาษาไทยเท่านั้น"),
+
+    name_nick: z.string()
+        .min(1, "กรุณาระบุชื่อเล่น")
+        .regex(thaiRegex, "กรุณาระบุเป็นภาษาไทยเท่านั้น"),
 
     // วันเกิดรับเป็น Date object
     info_dob: z.preprocess((arg) => {
@@ -85,9 +95,11 @@ export const Step2Schema = z.object({
 
 // --- Step 3: ผู้ปกครอง, ความพร้อม, เสื้อ ---
 export const Step3Schema = z.object({
-    guardian_name: z.string().min(1, "กรุณาระบุชื่อผู้ปกครอง"),
+    guardian_name: z.string()
+        .min(1, "กรุณาระบุชื่อผู้ปกครอง")
+        .regex(thaiRegex, "กรุณาระบุเป็นภาษาไทยเท่านั้น"),
     guardian_relationship: z.string().min(1, "กรุณาระบุความสัมพันธ์"),
-    guardian_phone: z.string().regex(phoneRegex, "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก"),
+    guardian_phone: z.string().regex(phoneRegex, "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลักและต้องขึ้นต้นด้วยเลข 0"),
 
     availability_haveAttended: z
         .string()
