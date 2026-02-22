@@ -4,13 +4,22 @@ import { motion } from "motion/react";
 import * as React from "react";
 import { Variants } from "motion";
 
-const TIMELINE_DATA = [
+interface timeline {
+    id: number;
+    title: string;
+    dateDisplay: string;
+    startDate: string;
+    endDate: string;
+}
+
+const TIMELINE_DATA:timeline[] = [
     {
         id: 1,
         title: "เปิดรับสมัคร",
         dateDisplay: "23 กุมภาพันธ์ - 10 มีนาคม 2569",
-        startDate: process.env.NEXT_PUBLIC_TIME_START_REGIS,
-        endDate: process.env.NEXT_PUBLIC_TIME_END_REGIS,
+        startDate: process.env.NEXT_PUBLIC_TIME_START_REGIS || "2026-02-23",
+
+        endDate: process.env.NEXT_PUBLIC_TIME_END_REGIS || "2026-03-10",
     },
     {
         id: 2,
