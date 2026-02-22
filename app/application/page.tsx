@@ -199,7 +199,7 @@ function ApplicationCardMD({ status, loading, onSubmit }: ApplicationCardProps) 
         },
         SUBMITTED: {
             title: 'ส่งใบสมัครเรียบร้อยแล้ว',
-            description: 'ระบบได้รับใบสมัครของคุณแล้ว รอติดตามผลการคัดเลือกได้เลย!',
+            description: 'ระบบได้รับใบสมัครของคุณแล้ว รอติดตามผลการคัดเลือกได้เลย !',
             buttonText: 'ส่งข้อมูลสำเร็จ',
             buttonClass: 'hidden',
             isDisabled: true,
