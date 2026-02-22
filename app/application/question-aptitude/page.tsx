@@ -73,10 +73,10 @@ const questions = [
             <div>
                 <h1 className="font-extrabold underline my-4">สถานการณ์จำลอง</h1>
                 <ul className="ml-3 list-disc [&>li]:ml-3">
-                    <li><strong>นาทีที่ 0:</strong> ทุกหอคอยเริ่มต้นที่ 🔵 ( X = 🔵, Y = 🔵, Z = 🔵)</li>
-                    <li><strong>นาทีที่ 1:</strong> เซ็นเซอร์ตรวจจับได้ว่า “ฝนตก” ทำให้หอคอย X เปลี่ยนเป็น 🟡 และเริ่มเปลี่ยนสถานะตามกฎ</li>
-                    <li><strong>นาทีที่ 2:</strong> พายุเข้า 🔴</li>
-                    <li><strong>นาทีที่ 3:</strong> พายุเข้า 🔴</li>
+                    <li><strong>นาทีที่ 0 : </strong> ทุกหอคอยเริ่มต้นที่ 🔵 ( X = 🔵, Y = 🔵, Z = 🔵)</li>
+                    <li><strong>นาทีที่ 1 : </strong> เซ็นเซอร์ตรวจจับได้ว่า “ฝนตก” ทำให้หอคอย X เปลี่ยนเป็น 🟡 และเริ่มเปลี่ยนสถานะตามกฎ</li>
+                    <li><strong>นาทีที่ 2 : </strong> พายุเข้า 🔴</li>
+                    <li><strong>นาทีที่ 3 : </strong> พายุเข้า 🔴</li>
                 </ul>
             </div>
 
