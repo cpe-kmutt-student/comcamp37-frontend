@@ -1526,7 +1526,7 @@ function Step3() {
 
                                     <FormLabel><div className="relative">
                                             <span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
-                                            สะดวกเข้าร่วมทุกวันไหม
+                                            สะดวกพักค้างคืนตลอดโครงการไหม
                                             </div></FormLabel>
                                     <FormControl>
                                         <RadioGroup
