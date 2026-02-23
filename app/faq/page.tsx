@@ -33,7 +33,7 @@ export default function faqPage() {
                     {FAQQuestions.map((question) => (
                         <AccordionItem key={question.id} value={question.id} className="z-20 border-b-2 border-black cursor-pointer">
                             <AccordionTrigger className="text-black font-bold text-lg px-4 hover:no-underline hover:pl-6 [&>svg]:text-black cursor-pointer">{question.question}</AccordionTrigger>
-                            <AccordionContent className="text-lg z-20 pr-4 pl-8 text-black">{question.answer}</AccordionContent>
+                            <AccordionContent className="text-lg z-20 pr-4 pl-8 text-black whitespace-pre-line">{question.answer}</AccordionContent>
                         </AccordionItem>
                     ))}
                 </Accordion>
