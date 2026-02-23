@@ -299,6 +299,7 @@ function Step1() {
     const router = useRouter()
 
     const [addressOptions, setAddressOptions] = useState<AddressResponse[]>([]);
+    const [availableProvinces, setAvailableProvinces] = useState<string[]>([]);
     const [availableDistricts, setAvailableDistricts] = useState<string[]>([]);
     const [availableSubDistricts, setAvailableSubDistricts] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -356,59 +357,75 @@ function Step1() {
         },
     })
 
+    const currentProvince = form.watch("info_province");
+
+    const hasProvince = !!currentProvince && currentProvince.trim() !== "";
+    const isBKK = currentProvince === "กรุงเทพมหานคร";
+
+    const districtLabel = isBKK ? "เขต" : (hasProvince ? "อำเภอ" : "เขต/อำเภอ");
+    const subDistrictLabel = isBKK ? "แขวง" : (hasProvince ? "ตำบล" : "แขวง/ตำบล");
+
     const handleZipCodeChange = async (postal: string) => {
         form.setValue("info_province", "");
         form.setValue("info_district", "");
         form.setValue("info_sub_district", "");
+        setAvailableProvinces([]);
         setAvailableDistricts([]);
         setAvailableSubDistricts([]);
-
         form.clearErrors("info_zipcode");
 
         if (postal.length === 5) {
             setIsLoading(true);
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/util/address?postal=${postal}`);
+                const res = await fetch(`https://dev-api.comcamp.io/api/util/address?postal=${postal}`);
                 const data: AddressResponse[] = await res.json();
 
-                // เช็คว่า API ส่งข้อมูลกลับมาหรือไม่ (รหัสไม่มีจริง หรือส่งกลับมาเป็น Array ว่าง)
                 if (!data || data.length === 0) {
-                    // บังคับแสดง Error ที่ช่องรหัสไปรษณีย์
-                    form.setError("info_zipcode", {
-                        type: "manual",
-                        message: "ไม่พบรหัสไปรษณีย์นี้ในระบบ กรุณาตรวจสอบอีกครั้ง"
-                    });
-                    return; // หยุดการทำงาน ไม่ต้องทำ Auto-fill ต่อ
+                    form.setError("info_zipcode", { type: "manual", message: "ไม่พบรหัสไปรษณีย์นี้" });
+                    return;
                 }
 
                 setAddressOptions(data);
 
-                // Auto-fill จังหวัด
-                form.setValue("info_province", data[0].province);
+                const uniqueProvinces = Array.from(new Set(data.map(d => d.province)));
+                setAvailableProvinces(uniqueProvinces);
 
-                // จัดการอำเภอ/เขต
-                const uniqueDistricts = Array.from(new Set(data.map(d => d.district)));
-                setAvailableDistricts(uniqueDistricts);
-
-                if (uniqueDistricts.length === 1) {
-                    form.setValue("info_district", uniqueDistricts[0]);
-                    const subs = data.map(d => d.subdistrict);
-                    setAvailableSubDistricts(subs);
-
-                    if (subs.length === 1) {
-                        form.setValue("info_sub_district", subs[0]);
-                    }
+                if (uniqueProvinces.length === 1) {
+                    form.setValue("info_province", uniqueProvinces[0]);
+                    processDistricts(uniqueProvinces[0], data);
                 }
             } catch (error) {
-                console.error("Fetch address error:", error);
-                // ดัก Error เผื่อ API ล่ม
-                form.setError("info_zipcode", {
-                    type: "manual",
-                    message: "ไม่สามารถตรวจสอบรหัสไปรษณีย์ได้ในขณะนี้"
-                });
+                console.error(error);
             } finally {
                 setIsLoading(false);
             }
+        }
+    };
+
+    const processDistricts = (selectedProvince: string, allData: AddressResponse[]) => {
+        const filteredByProvince = allData.filter(d => d.province === selectedProvince);
+        const uniqueDistricts = Array.from(new Set(filteredByProvince.map(d => d.district)));
+
+        setAvailableDistricts(uniqueDistricts);
+
+        if (uniqueDistricts.length === 1) {
+            form.setValue("info_district", uniqueDistricts[0]);
+            processSubDistricts(uniqueDistricts[0], filteredByProvince);
+        } else {
+            form.setValue("info_district", "");
+            form.setValue("info_sub_district", "");
+            setAvailableSubDistricts([]);
+        }
+    };
+
+    const processSubDistricts = (selectedDistrict: string, dataScope: AddressResponse[]) => {
+        const subs = dataScope.filter(d => d.district === selectedDistrict).map(d => d.subdistrict);
+        setAvailableSubDistricts(subs);
+
+        if (subs.length === 1) {
+            form.setValue("info_sub_district", subs[0]);
+        } else {
+            form.setValue("info_sub_district", "");
         }
     };
 
@@ -781,13 +798,13 @@ function Step1() {
                                             className="py-6 px-4 rounded-xl"
                                             placeholder="XXXXX"
                                             {...field}
-                                            value={field.value || ""} // กัน Error Uncontrolled Input
+                                            value={field.value || ""}
                                             maxLength={5}
                                             onChange={(e) => {
 
                                                 const onlyNumbers = e.target.value.replace(/\D/g, "");
-                                                field.onChange(onlyNumbers); // อัปเดตค่าเข้า Form
-                                                handleZipCodeChange(onlyNumbers); // เรียกใช้ฟังก์ชันตรวจสอบ
+                                                field.onChange(onlyNumbers);
+                                                handleZipCodeChange(onlyNumbers);
                                             }}
                                         />
                                     </FormControl>
@@ -802,12 +819,32 @@ function Step1() {
                             name="info_province"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>
-                                        <div className="relative"><span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
-                                            จังหวัด</div></FormLabel>
-                                    <FormControl>
-                                        <Input {...field} disabled readOnly className="py-6 px-4 rounded-xl bg-gray-100" placeholder="กรุณาระบุรหัสไปรษณีย์ก่อน" />
-                                    </FormControl>
+                                    <FormLabel>จังหวัด</FormLabel>
+                                    {availableProvinces.length > 1 ? (
+                                        <Select
+                                            onValueChange={(val) => {
+                                                field.onChange(val);
+                                                processDistricts(val, addressOptions);
+                                            }}
+                                            value={field.value || ""}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger className={`py-6 px-4 w-full rounded-xl ${form.watch("info_province") === "" ? "border-theme-secondary" : ""} border-2`}>
+                                                    <SelectValue placeholder="รหัสไปรษณีย์นี้มีหลายจังหวัด กรุณาเลือก" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {availableProvinces.map((p, i) => (
+                                                    <SelectItem key={i} value={p}>{p}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    ) : (
+                                        <FormControl>
+                                            <Input {...field} value={field.value || ""} readOnly className="py-6 px-4 rounded-xl bg-gray-100" placeholder="กรุณาระบุรหัสไปรษณีย์ก่อน" />
+                                        </FormControl>
+                                    )}
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -818,35 +855,29 @@ function Step1() {
                             name="info_district"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel><div className="relative"><span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
-                                        { form.watch("info_province") === "" ? "เขต/อำเภอ" : (form.watch("info_province") === "กรุงเทพมหานคร" ? "เขต" : "อำเภอ")}
-                                    </div></FormLabel>
+                                    <FormLabel>{districtLabel}</FormLabel>
                                     {availableDistricts.length > 1 ? (
                                         <Select
                                             onValueChange={(val) => {
                                                 field.onChange(val);
-                                                const subs = addressOptions
-                                                    .filter((d) => d.district === val)
-                                                    .map((d) => d.subdistrict);
-                                                setAvailableSubDistricts(subs);
-                                                form.setValue("info_sub_district", ""); // เคลียร์แขวงเก่าทิ้ง
+                                                processSubDistricts(val, addressOptions.filter(d => d.province === form.watch("info_province")));
                                             }}
-                                            value={field.value}
+                                            value={field.value || ""}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className="py-6 px-4 w-full rounded-xl">
-                                                    <SelectValue placeholder={`เลือก${form.watch("info_province") === "กรุงเทพมหานคร" ? "เขต" : "อำเภอ"}`} />
+                                                    <SelectValue placeholder={`เลือก${districtLabel}`} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {availableDistricts.map((d, index) => (
-                                                    <SelectItem className="py-3 px-4" key={index} value={d}>{d}</SelectItem>
+                                                {availableDistricts.map((d, i) => (
+                                                    <SelectItem key={i} value={d}>{d}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     ) : (
                                         <FormControl>
-                                            <Input {...field} readOnly disabled className="py-6 px-4 rounded-xl bg-gray-100" placeholder="กรุณาระบุรหัสไปรษณีย์ก่อน" />
+                                            <Input {...field} value={field.value || ""} readOnly className="py-6 px-4 rounded-xl bg-gray-100" placeholder={availableProvinces.length > 1 ? "กรุณาระบุจังหวัดก่อน" : "กรุณาระบุรหัสไปรษณีย์ก่อน"} />
                                         </FormControl>
                                     )}
                                     <FormMessage />
@@ -860,29 +891,30 @@ function Step1() {
                             name="info_sub_district"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel><div className="relative"><span className="absolute text-red-500 text-xs -left-[8px] -top-[0.5px]">*</span>
-                                        { form.watch("info_province") === "" ? "แขวง/ตำบล" : (form.watch("info_province") === "กรุงเทพมหานคร" ? "แขวง" : "ตำบล")}
-                                    </div></FormLabel>
+                                    <FormLabel>{subDistrictLabel}</FormLabel>
+
                                     {availableSubDistricts.length > 1 ? (
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            value={field.value}
-                                            disabled={availableSubDistricts.length === 0}
-                                        >
+                                        <Select onValueChange={field.onChange} value={field.value || ""}>
                                             <FormControl>
                                                 <SelectTrigger className="py-6 px-4 w-full rounded-xl">
-                                                    <SelectValue placeholder={isLoading ? "กำลังโหลด..." : `เลือก${(form.watch("info_province") === "กรุงเทพมหานคร" ? "แขวง" : "ตำบล")}`} />
+                                                    <SelectValue placeholder={`เลือก${subDistrictLabel}`} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {availableSubDistricts.map((sub, index) => (
-                                                    <SelectItem className="py-3 px-4" key={index} value={sub}>{sub}</SelectItem>
+                                                {availableSubDistricts.map((sub, i) => (
+                                                    <SelectItem key={i} value={sub}>{sub}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     ) : (
                                         <FormControl>
-                                            <Input {...field} disabled readOnly className="py-6 px-4 rounded-xl bg-gray-100" placeholder={`กรุณา${ form.watch("info_province") === "" ? "ระบุรหัสไปรษณีย์และเลือกเขต/อำเภอ" : (form.watch("info_province") === "กรุงเทพมหานคร" ? "เลือกเขต" : "เลือกอำเภอ")}ก่อน`} />
+                                            <Input
+                                                {...field}
+                                                value={field.value || ""}
+                                                readOnly
+                                                className="py-6 px-4 rounded-xl bg-gray-100"
+                                                placeholder={`กรุณาระบุ${subDistrictLabel}ก่อน`}
+                                            />
                                         </FormControl>
                                     )}
                                     <FormMessage />
