@@ -377,7 +377,7 @@ function Step1() {
         if (postal.length === 5) {
             setIsLoading(true);
             try {
-                const res = await fetch(`https://dev-api.comcamp.io/api/util/address?postal=${postal}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/util/address?postal=${postal}`);
                 const data: AddressResponse[] = await res.json();
 
                 if (!data || data.length === 0) {
