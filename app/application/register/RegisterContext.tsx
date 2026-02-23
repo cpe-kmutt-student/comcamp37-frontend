@@ -836,7 +836,7 @@ function Step1() {
                                             </FormControl>
                                             <SelectContent>
                                                 {availableProvinces.map((p, i) => (
-                                                    <SelectItem key={i} value={p}>{p}</SelectItem>
+                                                    <SelectItem className="py-3 px-4" key={i} value={p}>{p}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
@@ -874,7 +874,7 @@ function Step1() {
                                             </FormControl>
                                             <SelectContent>
                                                 {availableDistricts.map((d, i) => (
-                                                    <SelectItem key={i} value={d}>{d}</SelectItem>
+                                                    <SelectItem className="py-3 px-4" key={i} value={d}>{d}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
@@ -906,7 +906,7 @@ function Step1() {
                                             </FormControl>
                                             <SelectContent>
                                                 {availableSubDistricts.map((sub, i) => (
-                                                    <SelectItem key={i} value={sub}>{sub}</SelectItem>
+                                                    <SelectItem className="py-3 px-4" key={i} value={sub}>{sub}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
