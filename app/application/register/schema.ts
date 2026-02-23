@@ -106,7 +106,7 @@ export const Step2Schema = z.object({
             return num >= 0 && num <= 4.00;
         }, { message: "เกรดเฉลี่ยต้องอยู่ระหว่าง 0.00 - 4.00" }),
 
-    health_bloodType: z.enum(["A", "B", "O", "AB"], {
+    health_bloodType: z.enum(["A", "B", "O", "AB", "ไม่ทราบ"], {
         error: "กรุณาเลือกหมู่เลือด"
     }),
     health_medicalRights: z.string().min(1, "กรุณาระบุสิทธิการรักษา"),
