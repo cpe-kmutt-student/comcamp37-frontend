@@ -5,19 +5,30 @@ import { motion } from "motion/react"
 
 import { authClient } from "@/lib/auth-client";
 import {Variants} from "motion";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useUser} from "@/contexts/UserContext";
+import {Spinner} from "@/components/ui/spinner";
 
-const loginWithGoogle = async () => {
-    await authClient.signIn.social({
-        provider: "google",
-        callbackURL: `${process.env.NEXT_PUBLIC_SERVER_URL}/application`
-    })
-}
 export default function SignInPage() {
     const router = useRouter();
     const { user } = useUser()
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const loginWithGoogle = async () => {
+        try {
+            setIsLoading(true); // เริ่มโหลด
+            await authClient.signIn.social({
+                provider: "google",
+                callbackURL: `${process.env.NEXT_PUBLIC_SERVER_URL}/application`
+            });
+            // หมายเหตุ: โดยปกติหลังคำสั่งนี้ Browser จะ Redirect หนีไปหน้า Google ทันที
+        } catch (error) {
+            console.error("Login failed", error);
+            setIsLoading(false); // ถ้า error ต้องปิด loading เพื่อให้กดใหม่ได้
+        }
+    };
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -115,11 +126,14 @@ export default function SignInPage() {
                     onClick={loginWithGoogle}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.98 }}
-                    className="group bg-white w-full flex items-center justify-center gap-3 h-13 md:h-15 px-4 rounded-xl shadow-lg cursor-pointer"
+                    disabled={isLoading}
+                    className="group bg-white disabled:bg-gray-300 w-full flex items-center justify-center gap-3 h-13 md:h-15 px-4 rounded-xl shadow-lg cursor-pointer transition-colors"
                 >
                     <Image src="/google.svg" width={22} height={22} alt="Google Logo"/>
-                    <span className="text-gray-700 font-medium md:text-lg md:leading-15.5 leading-13.5 tracking-tight opacity-80 font-noto-sans-thai h-full">
-                        ดำเนินการต่อด้วย Google{/*Continue with Google*/}
+                    <span className="text-gray-700 font-medium md:text-lg md:leading-15.5 leading-13.5 tracking-tight opacity-80 font-noto-sans-thai h-full items-center flex flex-col justify-center relative">
+                        { isLoading ? (<Spinner className="absolute size-5"/>) : "" }
+                        <div className={`${isLoading ? "opacity-0" : ""}`}>ดำเนินการต่อด้วย Google</div>
+                        {/*Continue with Google "ดำเนินการต่อด้วย Google"*/}
                     </span>
                 </motion.button>
 

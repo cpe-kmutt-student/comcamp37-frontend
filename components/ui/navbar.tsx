@@ -33,6 +33,7 @@ function Navbar() {
 
     const isLandingPage = pathname === '/';
     const isApplicationPage = pathname.startsWith('/application');
+    const isSigninPage = pathname.startsWith('/signin');
 
     const handleSignOut = async () => {
         await signOut();
@@ -69,6 +70,7 @@ function Navbar() {
         }
 
         if (isRegistrationOpen) {
+            if (isSigninPage) return;
             return (
                 <button
                     onClick={() => { router.push('/signin'); if(isMobile) closeMenu(); }}
