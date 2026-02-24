@@ -119,7 +119,7 @@ export default function SignInPage() {
                 >
                     <Image src="/google.svg" width={22} height={22} alt="Google Logo"/>
                     <span className="text-gray-700 font-medium md:text-lg md:leading-15.5 leading-13.5 tracking-tight opacity-80 font-noto-sans-thai h-full">
-                        Continue with Google
+                        ดำเนินการต่อด้วย Google{/*Continue with Google*/}
                     </span>
                 </motion.button>
 
