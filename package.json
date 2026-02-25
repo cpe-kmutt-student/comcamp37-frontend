@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rf .next .vercel .wrangler",
-    "build:cf": "npm run clean && npx -y @cloudflare/next-on-pages@1",
+    "build:cf": "npm run clean && npx -y @cloudflare/next-on-pages@1 && rm .vercel/output/static/_worker.js/nop-build-log.json",
     "preview": "npm run build:cf && npx wrangler pages dev .vercel/output/static --compatibility-flag=nodejs_compat"
   },
   "dependencies": {
