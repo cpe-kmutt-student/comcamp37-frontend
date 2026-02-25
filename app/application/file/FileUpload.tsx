@@ -123,16 +123,16 @@ const FileUpload: React.FC<FileUploadProps> = ({
     }, [fetchUrl]);
 
     // 2. Effect: สร้าง Preview เมื่อเลือกไฟล์ใหม่จากเครื่อง
-    useEffect(() => {
-        if (!file) return;
-        if (file.type.startsWith('image/')) {
-            const url = URL.createObjectURL(file);
-            setPreviewUrl(url);
-            return () => URL.revokeObjectURL(url);
-        } else {
-            setPreviewUrl(null);
-        }
-    }, [file]);
+    //useEffect(() => {
+    //    if (!file) return;
+    //    if (file.type.startsWith('image/')) {
+    //        const url = URL.createObjectURL(file);
+    //        setPreviewUrl(url);
+    //        return () => URL.revokeObjectURL(url);
+    //    } else {
+    //        setPreviewUrl(null);
+    //    }
+    //}, [file]);
 
     // ... (Validate Function เดิม) ...
     const validateFileType = (file: File, acceptString: string): boolean => {
@@ -181,6 +181,16 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 },
             });
 
+            const uploadedUrl = response.data?.file_url;
+
+            //console.log(uploadedUrl)
+            if (uploadedUrl) {
+                setIsPDF(response.data?.file_originalname.toLowerCase().includes('.pdf'));
+                setPreviewUrl(uploadedUrl);
+            } else {
+                setPreviewUrl(URL.createObjectURL(selectedFile));
+            }
+
             setFile(selectedFile);
             if (onChange) onChange(selectedFile);
             if (onUploadSuccess) onUploadSuccess(response.data);
@@ -203,6 +213,10 @@ const FileUpload: React.FC<FileUploadProps> = ({
         e.stopPropagation();
         if (isUploading || isFetching) return;
         setIsDragging(e.type === "dragenter" || e.type === "dragover");
+    };
+
+    const handleDragLeave = () => {
+        setIsDragging(false);
     };
 
     const handleDrop = (e: DragEvent) => {
@@ -240,7 +254,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
     const isLoading = isUploading || isFetching; // รวมสถานะโหลด
 
     return (
-        <div className={cn("w-full mx-auto", className)}>
+        <div
+
+            onDragOver={handleDrag}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+
+            className={cn("w-full mx-auto", className)}>
             <input
                 type="file"
                 name={name}
@@ -286,8 +306,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 {/* EMPTY STATE */}
                 {!hasContent && !isLoading && (
                     <div
-                        onDragOver={handleDrag}
-                        onDrop={handleDrop}
                         onClick={() => fileInputRef.current?.click()}
                         className="h-full w-full"
                     >
@@ -332,11 +350,19 @@ const FileUpload: React.FC<FileUploadProps> = ({
                         </div>
 
                         <div className="flex-1 min-h-0 bg-twilight-indigo-900/50 flex items-center justify-center relative overflow-hidden">
+                            { isDragging &&
+                                (
+                                    <div className="absolute w-full h-full backdrop-blur-xl backdrop-brightness-50 flex flex-col justify-center items-center font-semibold text-white text-sm">
+                                        <div>วางตรงนี้เพื่อเปลี่ยนไฟล์ใหม่</div>
+                                    </div>
+                                )
+                            }
                             {previewUrl ? (
                                 isPDF ? (
                                     // กรณีเป็น PDF (หรือโหลดรูปไม่ผ่าน) -> ใช้ iframe/embed
                                     // Browser จะจัดการพื้นหลังให้เอง (มักจะเป็นสีเทาเข้ม)
                                     <iframe
+                                        key={`pdf-${previewUrl}`}
                                         src={previewUrl}
                                         className="w-full h-full border-none"
                                         title="Preview"
@@ -344,6 +370,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                                 ) : (
                                     // กรณีปกติ -> ลองโหลดเป็นรูปก่อน
                                     <img
+                                        key={`pdf-${previewUrl}`}
                                         src={previewUrl}
                                         alt="Preview"
                                         className="w-full h-full object-contain p-4 rounded-md"

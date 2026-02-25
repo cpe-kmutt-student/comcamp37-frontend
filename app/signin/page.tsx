@@ -26,7 +26,8 @@ export default function SignInPage() {
             // หมายเหตุ: โดยปกติหลังคำสั่งนี้ Browser จะ Redirect หนีไปหน้า Google ทันที
         } catch (error) {
             console.error("Login failed", error);
-            setIsLoading(false); // ถ้า error ต้องปิด loading เพื่อให้กดใหม่ได้
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -72,6 +73,12 @@ export default function SignInPage() {
             router.replace('/application');
         }
     }, [user]);
+
+    useEffect(() => {
+        if (isLoading) {
+            setIsLoading(false)
+        }
+    }, []);
 
     return (
         <div className='absolute top-0 w-full flex flex-col items-center justify-center h-dvh pt-20 px-15 overflow-hidden'>
