@@ -17,30 +17,30 @@ const TIMELINE_DATA:timeline[] = [
         id: 1,
         title: "เปิดรับสมัคร",
         dateDisplay: "23 กุมภาพันธ์ - 10 มีนาคม 2569",
-        startDate: process.env.NEXT_PUBLIC_TIME_START_REGIS || "2026-02-23",
+        startDate: process.env.NEXT_PUBLIC_TIME_START_REGIS || "2026-02-23T14:00:00+07:00",
 
-        endDate: process.env.NEXT_PUBLIC_TIME_END_REGIS || "2026-03-10",
+        endDate: process.env.NEXT_PUBLIC_TIME_END_REGIS || "2026-03-10T23:59:59+07:00",
     },
     {
         id: 2,
         title: "ประกาศผล",
         dateDisplay: "21 มีนาคม 2569",
-        startDate: "2026-03-21",
-        endDate: "2026-03-21",
+        startDate: "2026-03-21T00:00:00+07:00",
+        endDate: "2026-03-21T00:00:00+07:00",
     },
     {
         id: 3,
         title: "ยืนยันสิทธิ์",
         dateDisplay: "21 - 22 มีนาคม 2569",
-        startDate: "2026-03-21",
-        endDate: "2026-03-22",
+        startDate: "2026-03-21T00:00:00+07:00",
+        endDate: "2026-03-22T23:59:59+07:00",
     },
     {
         id: 4,
         title: "วันค่าย",
         dateDisplay: "8 - 12 เมษายน 2569",
-        startDate: "2026-04-08",
-        endDate: "2026-04-12",
+        startDate: "2026-04-08T00:00:00+07:00",
+        endDate: "2026-04-12T15:00:00+07:00",
     },
 ];
 
@@ -84,105 +84,96 @@ function TimelineSection() {
 
     // --- Logic คำนวณ Progress ---
     React.useEffect(() => {
-        const today = new Date();
-        //today.setHours(0, 0, 0, 0);
-
-        let milestoneIndex = -1;
-        let milestoneProgress = 0;
-
-        const firstMilestoneStart = new Date(TIMELINE_DATA[0].startDate);
-        //firstMilestoneStart.setHours(0, 0, 0, 0);
-
-        if (today < firstMilestoneStart) {
-            setCurrentMilestone(-1);
-            setProgress(0);
-            return;
-        }
-
-        for (let i = 0; i < TIMELINE_DATA.length; i++) {
-            const milestoneStart = new Date(TIMELINE_DATA[i].startDate);
-            milestoneStart.setHours(0, 0, 0, 0);
-            const milestoneEnd = new Date(TIMELINE_DATA[i].endDate);
-            //milestoneEnd.setHours(23, 59, 59, 999);
-
-            if (today >= milestoneStart && today <= milestoneEnd) {
-                milestoneIndex = i;
-                const totalDuration = milestoneEnd.getTime() - milestoneStart.getTime();
-                const elapsed = today.getTime() - milestoneStart.getTime();
-                milestoneProgress = totalDuration > 0 ? elapsed / totalDuration : 1;
-                break;
-            } else if (today > milestoneEnd) {
-                milestoneIndex = i;
-                milestoneProgress = 1;
-            } else {
-                break;
-            }
-        }
-
-        if (milestoneIndex >= TIMELINE_DATA.length - 1 && milestoneProgress === 1) {
-            milestoneIndex = TIMELINE_DATA.length - 1;
-        }
-
-        setCurrentMilestone(milestoneIndex);
-
         const calculateProgress = () => {
-            const isMobile = window.innerWidth < 1024;
+            const todayMs = new Date().getTime();
+            let activeIdx = -1;
+            let gapProg = 0; // 0 = หยุดที่จุด, >0 = กำลังวิ่งไปจุดหน้า, 1 = ทะลุขอบ
 
+            for (let i = 0; i < TIMELINE_DATA.length; i++) {
+                const startMs = new Date(TIMELINE_DATA[i].startDate).getTime();
+                const endMs = new Date(TIMELINE_DATA[i].endDate).getTime();
+
+                if (todayMs < startMs) {
+                    if (i === 0) {
+                        activeIdx = -1;
+                        gapProg = 0;
+                    } else {
+                        activeIdx = i - 1;
+                        const prevEndMs = new Date(TIMELINE_DATA[i - 1].endDate).getTime();
+                        const gapTotal = startMs - prevEndMs;
+                        const gapElapsed = todayMs - prevEndMs;
+                        gapProg = gapTotal > 0 ? gapElapsed / gapTotal : 1;
+                    }
+                    break;
+                } else if (todayMs >= startMs && todayMs <= endMs) {
+                    activeIdx = i;
+                    gapProg = 0;
+                    break;
+                } else if (i === TIMELINE_DATA.length - 1 && todayMs > endMs) {
+                    activeIdx = i;
+                    gapProg = 1;
+                }
+            }
+
+            setCurrentMilestone(activeIdx);
+
+            const isMobile = window.innerWidth < 1024;
             const activeBarRef = isMobile ? mobileProgressBarRef : progressBarRef;
             const activeCheckpoints = isMobile ? mobileCheckpointsRef.current : checkpointsRef.current;
 
             if (!activeBarRef.current || activeCheckpoints.length === 0) return;
 
             const barRect = activeBarRef.current.getBoundingClientRect();
-
             const barStart = isMobile ? barRect.top : barRect.left;
             const barSize = isMobile ? barRect.height : barRect.width;
 
             if (barSize === 0) return;
 
-            const currentCheckpoint = activeCheckpoints[milestoneIndex];
-            if (!currentCheckpoint) {
+            if (activeIdx === -1) {
                 setProgress(0);
                 return;
             }
 
-            const currentRect = currentCheckpoint.getBoundingClientRect();
+            const currentCheckpoint = activeCheckpoints[activeIdx];
+            if (!currentCheckpoint) return;
 
+            const currentRect = currentCheckpoint.getBoundingClientRect();
             const currentCenter = isMobile
                 ? (currentRect.top + currentRect.height / 2) - barStart
                 : (currentRect.left + currentRect.width / 2) - barStart;
 
-            if (milestoneProgress === 1) {
-                const progressPercent = (currentCenter / barSize) * 100;
-                setProgress(Math.min(progressPercent, 100));
-            } else {
-                const nextCheckpoint = activeCheckpoints[milestoneIndex + 1];
-                if (!nextCheckpoint) {
-                    const progressPercent = (currentCenter / barSize) * 100;
-                    setProgress(Math.min(progressPercent, 100));
-                    return;
+            let progressPixels = currentCenter;
+
+            if (gapProg > 0) {
+                if (activeIdx === TIMELINE_DATA.length - 1 && gapProg === 1) {
+                    progressPixels = barSize;
+                } else {
+                    const nextCheckpoint = activeCheckpoints[activeIdx + 1];
+                    if (nextCheckpoint) {
+                        const nextRect = nextCheckpoint.getBoundingClientRect();
+                        const nextCenter = isMobile
+                            ? (nextRect.top + nextRect.height / 2) - barStart
+                            : (nextRect.left + nextRect.width / 2) - barStart;
+
+                        const distance = nextCenter - currentCenter;
+                        progressPixels = currentCenter + (distance * gapProg);
+                    }
                 }
-
-                const nextRect = nextCheckpoint.getBoundingClientRect();
-                const nextCenter = isMobile
-                    ? (nextRect.top + nextRect.height / 2) - barStart
-                    : (nextRect.left + nextRect.width / 2) - barStart;
-
-                const distance = nextCenter - currentCenter;
-                const progressPixels = currentCenter + (distance * milestoneProgress);
-                const progressPercent = (progressPixels / barSize) * 100;
-
-                setProgress(Math.min(progressPercent, 100));
             }
+
+            const progressPercent = (progressPixels / barSize) * 100;
+            setProgress(Math.min(Math.max(progressPercent, 0), 100));
         };
 
+        calculateProgress();
         const timer = setTimeout(calculateProgress, 100);
         window.addEventListener('resize', calculateProgress);
+
         return () => {
             clearTimeout(timer);
             window.removeEventListener('resize', calculateProgress);
         };
-    }, [currentMilestone]);
+    }, []);
 
     return (
         <motion.div
@@ -271,12 +262,12 @@ function TimelineSection() {
                     </div>
 
                     {TIMELINE_DATA.map((item, index) => {
-                        const milestoneEnd = new Date(item.endDate);
-                        milestoneEnd.setHours(23, 59, 59, 999);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const isCompleted = today > milestoneEnd;
-                        const isCurrent = index === currentMilestone && !isCompleted;
+                        const startMs = new Date(item.startDate).getTime();
+                        const endMs = new Date(item.endDate).getTime();
+                        const todayMs = new Date().getTime();
+
+                        const isCompleted = todayMs > endMs;
+                        const isCurrent = todayMs >= startMs && todayMs <= endMs;
 
                         return (
                             <motion.div
@@ -350,12 +341,12 @@ function TimelineSection() {
                     </div>
 
                     {TIMELINE_DATA.map((item, index) => {
-                        const milestoneEnd = new Date(item.endDate);
-                        milestoneEnd.setHours(23, 59, 59, 999);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const isCompleted = today > milestoneEnd;
-                        const isCurrent = index === currentMilestone && !isCompleted;
+                        const startMs = new Date(item.startDate).getTime();
+                        const endMs = new Date(item.endDate).getTime();
+                        const todayMs = new Date().getTime();
+
+                        const isCompleted = todayMs > endMs;
+                        const isCurrent = todayMs >= startMs && todayMs <= endMs;
 
                         return (
                             <motion.div
