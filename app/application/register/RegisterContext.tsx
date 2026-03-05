@@ -260,7 +260,7 @@ export function RegisterProvider({ children }: { children: React.ReactNode }) {
             } catch (e) { console.error(e); }
         }
 
-        if (studentInfo?.std_application_id === applicationId && localParsed && localParsed.application_id === applicationId) {
+        if (studentInfo?.created_at !== studentInfo?.updated_at && studentInfo?.std_application_id === applicationId && localParsed && localParsed.application_id === applicationId) {
             const localTime = new Date(localParsed.updated_at).getTime();
             const dbTime = studentInfo.updated_at ? new Date(studentInfo.updated_at).getTime() : 0;
             setCloudDataTime(dbTime);
