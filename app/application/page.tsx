@@ -103,6 +103,7 @@ interface ApplicationCardProps {
     status: ApplicationStatus;
     loading: boolean;
     onSubmit?: () => void;
+    setIncompleteError?: (hasError: boolean) => void;
 }
 
 const statusConfig = {
@@ -176,7 +177,7 @@ const statusConfig = {
     },
 };
 
-function ApplicationCard({ status, loading, onSubmit }: ApplicationCardProps) {
+function ApplicationCard({ status, loading, onSubmit, setIncompleteError }: ApplicationCardProps) {
 
     const current = statusConfig[status];
 
@@ -219,7 +220,7 @@ function ApplicationCard({ status, loading, onSubmit }: ApplicationCardProps) {
                     type="button"
                     variants={{
                         // The normal state
-                        idle: { x: 0, backgroundColor: "" },
+                        idle: { x: 0 },
                         // The animation triggered on click when disabled
                         disabledClick: {
                             x: [-2, 2, -2, 2, 0],
@@ -231,6 +232,11 @@ function ApplicationCard({ status, loading, onSubmit }: ApplicationCardProps) {
                     whileTap={!(current.isDisabled || loading) ? { scale: 0.95 } : "disabledClick"}
 
                     onClick={() => {
+                        if (status === 'INCOMPLETE') {
+                            if (setIncompleteError) {
+                                setIncompleteError(true);
+                            }
+                        }
                         if (current.isDisabled || loading) return;
                         if (status === 'READY') {
                             if (onSubmit) {
@@ -247,7 +253,7 @@ function ApplicationCard({ status, loading, onSubmit }: ApplicationCardProps) {
     );
 }
 
-function ApplicationCardMD({ status, loading, onSubmit }: ApplicationCardProps) {
+function ApplicationCardMD({ status, loading, onSubmit, setIncompleteError }: ApplicationCardProps) {
 
     const current = statusConfig[status];
 
@@ -302,6 +308,11 @@ function ApplicationCardMD({ status, loading, onSubmit }: ApplicationCardProps) 
                     whileTap={!(current.isDisabled || loading) ? { scale: 0.95 } : "disabledClick"}
 
                     onClick={() => {
+                        if (status === 'INCOMPLETE') {
+                            if (setIncompleteError) {
+                                setIncompleteError(true);
+                            }
+                        }
                         if (current.isDisabled || loading) return;
                         if (status === 'READY') {
                             if (onSubmit) {
@@ -329,6 +340,8 @@ export default function applicationHome() {
 
     const [clickCount, setClickCount] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+    const [isIncompleteError, setIncompleteError] = useState<boolean>(false);
 
     const getLatestCookie = (name:String) => {
         const cookies = document.cookie.split('; ');
@@ -492,20 +505,21 @@ export default function applicationHome() {
             </AnimatePresence>
         <main className="flex-1 w-full max-w-[1280px] mx-auto py-3 px-3 md:px-6 flex flex-col gap-3 md:gap-5 mt-5 md:mt-0">
 
-            <div className="order-2 md:order-1">
+            <div className="order-2 md:order-1 ">
 
                 <div className="absolute w-full justify-center left-0 z-20 hidden md:flex">
                     <HorizontalMissionPath missions={myMissions}/>
                 </div>
-                <div className="md:h-[250px] w-full relative bg-twilight-indigo-900 rounded-xl shadow-sm px-7 py-5 drop-shadow-xl drop-shadow-black/20">
+                <div className={`md:h-[250px] w-full relative bg-twilight-indigo-900 rounded-xl shadow-sm px-7 py-5 drop-shadow-xl drop-shadow-black/20 ${isIncompleteError ? "border-2 border-red-600" : ""}`}>
                     <MissionOverlay status={currentStatus} />
-                    <div className="text-2xl font-bold z-30 absolute bg-twilight-indigo-900 pb-3 ">ภารกิจของคุณ <FontAwesomeIcon icon={faMapLocationDot} /></div>
+                    <div className="text-2xl font-bold z-30 absolute bg-twilight-indigo-900 pb-3">ภารกิจของคุณ <FontAwesomeIcon icon={faMapLocationDot} /></div>
                     <div className="block md:hidden">
                         <div className="rounded-2xl pt-10 pb-6">
                             <VerticalMissionPath missions={myMissions} />
                         </div>
                     </div>
                     <CountdownLabel status={statusExpired}/>
+                    {isIncompleteError && (<div className="absolute bottom-3 left-5 text-sm text-red-600">กรุณาทำภารกิจทั้งหมด</div>)}
                 </div>
 
             </div>
@@ -522,7 +536,7 @@ export default function applicationHome() {
                             src={studentFaceImage || user?.image || "https://storage.comcamp.io/web-assets/gooseNick.png"}
                             onError={(e) => { e.currentTarget.src = "https://storage.comcamp.io/web-assets/gooseNick.png"; }}
                             alt=""
-                            className={`select-none relative z-10 w-full h-full bg-twilight-indigo-700 border-white border border-5 rounded-full object-cover object-top`}
+                            className={`select-none relative z-10 w-full h-full bg-twilight-indigo-700 border-white border-5 rounded-full object-cover object-top`}
                         />
                         <Image
                             src={`${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/RabbitEars.png`}
@@ -561,7 +575,9 @@ export default function applicationHome() {
 
                 </div>
 
-                <ApplicationCard status={currentStatus} onSubmit={() => {
+                <ApplicationCard status={currentStatus} setIncompleteError={(set:boolean) => {
+                    setIncompleteError(set)
+                }} onSubmit={() => {
                     setIsAgreed(false);
                     setIsConfirmModalOpen(true);
                 }} loading={isSubmitLoading}></ApplicationCard>
@@ -574,7 +590,9 @@ export default function applicationHome() {
 
             </div>
             <div className="grid md:hidden grid-cols-1 grid-rows-none md:grid-cols-5 md:grid-rows-2 gap-y-5 md:gap-5 order-3">
-                <ApplicationCardMD status={currentStatus} onSubmit={() => {
+                <ApplicationCardMD status={currentStatus} setIncompleteError={(set:boolean) => {
+                    setIncompleteError(set)
+                }} onSubmit={() => {
                     setIsAgreed(false);
                     setIsConfirmModalOpen(true);
                 }} loading={isSubmitLoading}></ApplicationCardMD>
