@@ -341,6 +341,7 @@ export default function applicationHome() {
     const [isAgreed, setIsAgreed] = useState(false);
 
     const [clickCount, setClickCount] = useState(0);
+    const [getTimeStamp, setTimeStamp] = useState<String>("");
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const [copyModalOpen, setCopyModalOpen] = useState<boolean>(false)
 
@@ -465,7 +466,7 @@ export default function applicationHome() {
                             </div>
 
                             <div className="bg-twilight-indigo-700 p-3 select-all rounded-lg">
-                                {decodeURIComponent(studentInfo?.std_info_prefix || "")}{decodeURIComponent(studentInfo?.std_info_first_name || "")} {decodeURIComponent(studentInfo?.std_info_last_name || "")}<br/>อีเมล: {user?.email}<br/>เบอร์โทรศัพท์: {studentInfo?.std_info_phone_number}<br/>รหัสใบสมัคร: {applicationId}<br/><br/>{getLatestCookie("_clck")?.slice(0,6)}<br/><br/>โปรดใช้ข้อมูลนี้สำหรับประสานงานกับทางทีมงาน<br/><br/>ComCamp 37<br/>{new Date().toLocaleString()}
+                                {decodeURIComponent(studentInfo?.std_info_prefix || "")}{decodeURIComponent(studentInfo?.std_info_first_name || "")} {decodeURIComponent(studentInfo?.std_info_last_name || "")}<br/>อีเมล: {user?.email}<br/>เบอร์โทรศัพท์: {studentInfo?.std_info_phone_number}<br/>รหัสใบสมัคร: {applicationId}<br/><br/>{getLatestCookie("_clck")?.slice(0,6)}<br/><br/>โปรดใช้ข้อมูลนี้สำหรับประสานงานกับทางทีมงาน<br/><br/>ComCamp 37<br/>{getTimeStamp}
                             </div>
 
                             {/* ปุ่มกดยกเลิก / ยืนยัน */}
@@ -604,7 +605,8 @@ export default function applicationHome() {
                             scale: 1.05, backgroundColor: "#1f347a"
                         }}
                         onClick={() => {
-                            setCopyModalOpen(true)
+                            setCopyModalOpen(true);
+                            setTimeStamp(new Date().toLocaleString());
                         }}
                         className="absolute right-3 top-3 flex flex-col justify-center items-center aspect-square w-10 h-10 text-center bg-twilight-indigo-800 cursor-pointer rounded-lg">
                         <FontAwesomeIcon icon={faBellConcierge}/>
