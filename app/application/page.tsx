@@ -5,6 +5,8 @@ import {AnimatePresence, motion} from "motion/react"
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
+    faBellConcierge,
+    faCopy,
     faFloppyDisk,
     faFolderOpen,
     faMapLocationDot, faPersonHiking,
@@ -340,6 +342,7 @@ export default function applicationHome() {
 
     const [clickCount, setClickCount] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const [copyModalOpen, setCopyModalOpen] = useState<boolean>(false)
 
     const [isIncompleteError, setIncompleteError] = useState<boolean>(false);
 
@@ -368,7 +371,7 @@ export default function applicationHome() {
     };
 
     const copyToClipboard = async () => {
-        const textToCopy = `[แจ้งปัญหาการสมัคร] \n\n${decodeURIComponent(studentInfo?.std_info_prefix || "")}${decodeURIComponent(studentInfo?.std_info_first_name || "")} ${decodeURIComponent(studentInfo?.std_info_last_name || "")}\nอีเมล: ${user?.email}\nเบอร์โทรศัพท์: ${studentInfo?.std_info_phone_number}\nรหัสใบสมัคร: ${applicationId}\n\n${getLatestCookie("_clck")?.slice(0,6)}\n\nโปรดใช้ข้อมูลนี้สำหรับประสานงานกับทางทีมงาน\n\nComCamp 37\n${new Date().toLocaleString()}`;
+        const textToCopy = `โปรดใช้ข้อมูลนี้สำหรับประสานงานกับทางทีมงาน\n\n${decodeURIComponent(studentInfo?.std_info_prefix || "")}${decodeURIComponent(studentInfo?.std_info_first_name || "")} ${decodeURIComponent(studentInfo?.std_info_last_name || "")}\nอีเมล: ${user?.email}\nเบอร์โทรศัพท์: ${studentInfo?.std_info_phone_number}\nรหัสใบสมัคร: ${applicationId}\n${getLatestCookie("_clck")?.slice(0,6)}\n\nComCamp 37\n${new Date().toLocaleString()}`;
         try {
             await navigator.clipboard.writeText(textToCopy);
             toast.success("คัดลอกรหัสใบสมัครแล้ว");
@@ -435,6 +438,57 @@ export default function applicationHome() {
     return (
         <>
             <AnimatePresence>
+                {copyModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => !isSubmitLoading && setIsConfirmModalOpen(false)}
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        />
+
+                        {/* กล่อง Dialog */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
+                            className="relative w-full max-w-xl bg-twilight-indigo-900 border border-twilight-indigo-700 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col gap-6"
+                        >
+                            <div>
+                                <h2 className="text-2xl font-bold text-white mb-2">แจ้งปัญหาการสมัคร</h2>
+                                <p className="text-twilight-indigo-300">
+                                    โปรดใช้ข้อมูลนี้ในการประสานงานกับทางทีมงาน
+                                </p>
+                            </div>
+
+                            <div className="bg-twilight-indigo-700 p-3 select-all rounded-lg">
+                                {decodeURIComponent(studentInfo?.std_info_prefix || "")}{decodeURIComponent(studentInfo?.std_info_first_name || "")} {decodeURIComponent(studentInfo?.std_info_last_name || "")}<br/>อีเมล: {user?.email}<br/>เบอร์โทรศัพท์: {studentInfo?.std_info_phone_number}<br/>รหัสใบสมัคร: {applicationId}<br/><br/>{getLatestCookie("_clck")?.slice(0,6)}<br/><br/>โปรดใช้ข้อมูลนี้สำหรับประสานงานกับทางทีมงาน<br/><br/>ComCamp 37<br/>{new Date().toLocaleString()}
+                            </div>
+
+                            {/* ปุ่มกดยกเลิก / ยืนยัน */}
+                            <div className="flex flex-col-reverse md:flex-row gap-3 justify-end mt-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setCopyModalOpen(false)}
+                                    className="cursor-pointer w-full md:w-auto border-twilight-indigo-600 text-twilight-indigo-300 hover:bg-twilight-indigo-700 hover:text-white transition-colors"
+                                >
+                                    ปิด
+                                </Button>
+                                <Button
+                                    type="button"
+                                    onClick={copyToClipboard}
+                                    className={`w-full md:w-auto font-bold transition-all cursor-pointer bg-gray-100 text-black hover:bg-gray-300 hover:text-black`}
+                                >
+                                    คัดลอก <FontAwesomeIcon icon={faCopy}/>
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
                 {isConfirmModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
 
@@ -543,7 +597,18 @@ export default function applicationHome() {
 
             <div className="grid grid-cols-1 grid-rows-none md:grid-cols-5 md:grid-rows-2 gap-y-5 md:gap-5 order-1 md:order-2 z-50">
 
-                <div className="col-span-1 md:col-span-2 md:row-span-2 bg-twilight-indigo-900 rounded-xl shadow-sm px-5 py-6 flex flex-col items-center gap-6 drop-shadow-xl drop-shadow-black/20">
+                <div className="relative col-span-1 md:col-span-2 md:row-span-2 bg-twilight-indigo-900 rounded-xl shadow-sm px-5 py-6 flex flex-col items-center gap-6 drop-shadow-xl drop-shadow-black/20">
+
+                    <motion.div
+                        whileHover={{
+                            scale: 1.05, backgroundColor: "#1f347a"
+                        }}
+                        onClick={() => {
+                            setCopyModalOpen(true)
+                        }}
+                        className="absolute right-3 top-3 flex flex-col justify-center items-center aspect-square w-10 h-10 text-center bg-twilight-indigo-800 cursor-pointer rounded-lg">
+                        <FontAwesomeIcon icon={faBellConcierge}/>
+                    </motion.div>
 
                     <div className={`w-35 h-35 rounded-full shadow-sm relative`}>
                         <img
