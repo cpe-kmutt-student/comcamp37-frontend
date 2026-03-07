@@ -9,8 +9,8 @@ import {
     faCopy,
     faFloppyDisk,
     faFolderOpen,
-    faMapLocationDot, faPersonHiking,
-    faSignsPost,
+    faMapLocationDot, faPaperPlane, faPersonHiking,
+    faSignsPost, faSpinner,
     faTents,
     faUser
 } from "@fortawesome/free-solid-svg-icons";
@@ -21,6 +21,7 @@ import { useUser } from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
 import {useStudent} from "@/contexts/StudentContext";
 import {Button} from "@/components/ui/button";
+import { Input } from "@/components/ui/input"
 import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {Spinner} from "@/components/ui/spinner";
@@ -28,6 +29,16 @@ import {REGIS_EXPIRED_DATE, TimerStatus, useCountdown} from "@/app/application/c
 import {toast} from "sonner";
 import {addYears, format} from "date-fns";
 import {th} from "date-fns/locale";
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+    FieldLegend,
+    FieldSeparator,
+    FieldSet,
+} from "@/components/ui/field"
+import { Textarea } from "@/components/ui/textarea"
 
 interface CountdownLabelProps {
     status: TimerStatus;
@@ -344,6 +355,7 @@ export default function applicationHome() {
     const [getTimeStamp, setTimeStamp] = useState<String>("");
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const [copyModalOpen, setCopyModalOpen] = useState<boolean>(false)
+    const [sendToStaffOpen, setSendToStaffOpen] = useState<boolean>(false)
 
     const [isIncompleteError, setIncompleteError] = useState<boolean>(false);
 
@@ -378,6 +390,50 @@ export default function applicationHome() {
             toast.success("คัดลอกรหัสใบสมัครแล้ว");
         } catch (err) {
             alert(textToCopy);
+        }
+    };
+
+    const [SendToStaffAdditionalInfo, setSendToStaffAdditionalInfo] = useState("");
+    const [isSendingToStaff, setIsSendingToStaff] = useState(false);
+
+    const handleSendToStaff = async () => {
+        setIsSendingToStaff(true);
+
+        try {
+            const systemMessage = `${decodeURIComponent(studentInfo?.std_info_prefix || "")}${decodeURIComponent(studentInfo?.std_info_first_name || "")} ${decodeURIComponent(studentInfo?.std_info_last_name || "")}
+อีเมล: ${user?.email || "-"}
+เบอร์โทรศัพท์: ${studentInfo?.std_info_phone_number || "-"}
+รหัสใบสมัคร: ${applicationId || "-"}
+
+Clarity: ${getLatestCookie("_clck")?.slice(0, 6) || ""}
+
+${new Date().toLocaleString()}
+
+รายละเอียด
+${SendToStaffAdditionalInfo.trim() || "-"}`;
+
+            const body = {
+                system_message: systemMessage,
+                user_message: SendToStaffAdditionalInfo.trim() || "-"
+            };
+
+            await axios.post(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ticket/create`,
+                body,
+                {
+                    withCredentials: true
+                }
+            );
+
+            toast.success("ส่งข้อมูลให้ทีมงานสำเร็จ");
+
+            setSendToStaffAdditionalInfo("");
+            setSendToStaffOpen(false);
+        } catch (error) {
+            console.error("Ticket Creation Error:", error);
+            toast.error("เกิดข้อผิดพลาดในการส่งข้อมูล โปรดลองอีกครั้ง");
+        } finally {
+            setIsSendingToStaff(false);
         }
     };
 
@@ -439,24 +495,100 @@ export default function applicationHome() {
     return (
         <>
             <AnimatePresence>
-                {copyModalOpen && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                {sendToStaffOpen && (
+                    <div className="fixed inset-0 z-1001 flex items-center justify-center p-4">
 
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            onClick={() => !isSubmitLoading && setIsConfirmModalOpen(false)}
+                            onClick={() => setSendToStaffOpen(false)}
                             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                         />
 
-                        {/* กล่อง Dialog */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
-                            className="relative w-full max-w-xl bg-twilight-indigo-900 border border-twilight-indigo-700 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col gap-6"
+                            className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-twilight-indigo-900 border border-twilight-indigo-700 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col gap-4 md:gap-6"
+                        >
+                            <div>
+                                <h2 className="text-2xl font-bold text-white mb-2">ส่งข้อมูลให้ทีมงาน</h2>
+                                <p className="text-twilight-indigo-300">
+                                    ระบบจะส่งข้อมูลที่จำเป็นให้กับทีมงานโดยอัตโนมัติ
+                                </p>
+                            </div>
+
+                            <FieldSet>
+                                <FieldGroup>
+
+                                    <Field className="">
+                                        <FieldLabel htmlFor="SendToStaffAdditionalInfo">
+                                            รายละเอียดเพิ่มเติม <span className="opacity-40">(ไม่จำเป็นต้องระบุ)</span>
+                                        </FieldLabel>
+                                        <Textarea
+                                            id="SendToStaffAdditionalInfo"
+                                            value={SendToStaffAdditionalInfo}
+                                            onChange={(e) => setSendToStaffAdditionalInfo(e.target.value)}
+                                            disabled={isSendingToStaff}
+                                            placeholder="เช่น ต้องการแก้ไขไฟล์ที่อัปโหลด"
+                                            className="resize-none max-h-25 !bg-twilight-indigo-700"
+                                            rows={5}
+                                        />
+                                    </Field>
+                                </FieldGroup>
+                            </FieldSet>
+
+                            <div className="flex flex-col-reverse md:flex-row gap-3 justify-end mt-4">
+                                {/* ปุ่มปิด */}
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setSendToStaffOpen(false)}
+                                    className="cursor-pointer w-full md:w-auto border-twilight-indigo-600 text-twilight-indigo-300 hover:bg-twilight-indigo-700 hover:text-white transition-colors"
+                                >
+                                    ปิด
+                                </Button>
+
+                                {/* ส่ง */}
+                                <Button
+                                    type="button"
+                                    onClick={handleSendToStaff}
+                                    disabled={isSendingToStaff}
+                                    className="w-full md:w-auto font-bold transition-all cursor-pointer bg-theme-secondary text-white hover:bg-theme-secondary-darken shadow-lg shadow-theme-secondary/20 border-none disabled:bg-theme-secondary-darken disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    {isSendingToStaff ? (
+                                        <>
+                                            กำลังส่ง...<Spinner/>
+                                        </>
+                                    ) : (
+                                        <>
+                                            ส่งให้ทีมงาน <FontAwesomeIcon icon={faPaperPlane}/>
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+                {copyModalOpen && (
+                    <div className="fixed inset-0 z-1001 flex items-center justify-center p-4">
+
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setCopyModalOpen(false)}
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        />
+
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
+                            className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-twilight-indigo-900 border border-twilight-indigo-700 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col gap-4 md:gap-6"
                         >
                             <div>
                                 <h2 className="text-2xl font-bold text-white mb-2">แจ้งปัญหาการสมัคร</h2>
@@ -469,8 +601,8 @@ export default function applicationHome() {
                                 {decodeURIComponent(studentInfo?.std_info_prefix || "")}{decodeURIComponent(studentInfo?.std_info_first_name || "")} {decodeURIComponent(studentInfo?.std_info_last_name || "")}<br/>อีเมล: {user?.email}<br/>เบอร์โทรศัพท์: {studentInfo?.std_info_phone_number}<br/>รหัสใบสมัคร: {applicationId}<br/><br/>{getLatestCookie("_clck")?.slice(0,6)}<br/><br/>โปรดใช้ข้อมูลนี้สำหรับประสานงานกับทางทีมงาน<br/><br/>ComCamp 37<br/>{getTimeStamp}
                             </div>
 
-                            {/* ปุ่มกดยกเลิก / ยืนยัน */}
-                            <div className="flex flex-col-reverse md:flex-row gap-3 justify-end mt-2">
+                            <div className="flex flex-col-reverse md:flex-row gap-3 justify-end mt-4">
+                                {/* ปุ่มปิด */}
                                 <Button
                                     type="button"
                                     variant="outline"
@@ -479,19 +611,33 @@ export default function applicationHome() {
                                 >
                                     ปิด
                                 </Button>
+
+                                {/* ปุ่มคัดลอก */}
                                 <Button
                                     type="button"
                                     onClick={copyToClipboard}
-                                    className={`w-full md:w-auto font-bold transition-all cursor-pointer bg-gray-100 text-black hover:bg-gray-300 hover:text-black`}
+                                    className="w-full md:w-auto font-medium transition-all cursor-pointer bg-twilight-indigo-700 text-white hover:bg-twilight-indigo-600"
                                 >
-                                    คัดลอก <FontAwesomeIcon icon={faCopy}/>
+                                    คัดลอก<FontAwesomeIcon icon={faCopy} />
+                                </Button>
+
+                                {/* ปุ่มส่งให้ทีมงาน */}
+                                <Button
+                                    type="button"
+                                    onClick={()=>{
+                                        setCopyModalOpen(false);
+                                        setSendToStaffOpen(true);
+                                    }}
+                                    className="md:mb-0 mb-5 w-full md:w-auto font-bold transition-all cursor-pointer bg-theme-secondary text-white hover:bg-theme-secondary-darken shadow-lg shadow-theme-secondary/20"
+                                >
+                                    ส่งให้ทีมงาน<FontAwesomeIcon icon={faPaperPlane}/>
                                 </Button>
                             </div>
                         </motion.div>
                     </div>
                 )}
                 {isConfirmModalOpen && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="fixed inset-0 z-1001 flex items-center justify-center p-4">
 
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -507,7 +653,7 @@ export default function applicationHome() {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
-                            className="relative w-full max-w-xl bg-twilight-indigo-900 border border-twilight-indigo-700 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col gap-6"
+                            className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-twilight-indigo-900 border border-twilight-indigo-700 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col gap-4 md:gap-6"
                         >
                             <div>
                                 <h2 className="text-2xl font-bold text-white mb-2">ยืนยันการส่งใบสมัคร</h2>
