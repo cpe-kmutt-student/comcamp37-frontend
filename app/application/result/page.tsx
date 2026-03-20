@@ -59,7 +59,7 @@ const resultState = {
 
         title: 'ขอแสดงความยินดี',
         bigtext: (<span className="text-[#1CAA00]">คุณผ่านการ<br className="sm:hidden"/>คัดเลือก</span>),
-        more: (<span>ขอให้น้องๆ รอติดตามประกาศการเรียกตัวสำรอง ในวันที่ 23 กุมภาพันธ์ 2569 ทางโทรศัพท์ได้เลยนะครับ</span>),
+        more: (<span>ขอแสดงความยินดีด้วยนะครับ! ขอให้น้องๆ เข้าไป กดยืนยันสิทธิ์ ในระบบ ภายใน วันที่ 22 มีนาคม 2569 ก่อนเวลา 23.59 น.<br/>*** หมายเหตุ : หากไม่ดำเนินการภายในวันและเวลาที่กำหนด ทางทีมงานจะถือว่าน้องสละสิทธิ์ และจะทำการเรียกตัวสำรองในลำดับถัดไปทันทีครับ</span>),
 
         stamp: 'pass',
         image: 'https://storage.comcamp.io/web-assets/result/pass.webp'
@@ -70,7 +70,7 @@ const resultState = {
 
         title: 'ข่าวดี !',
         bigtext: (<span className="text-yellow-600">คุณมีสิทธิ<br className="sm:hidden"/>ตัวสำรอง</span>),
-        more: (<>ขอขอบคุณที่ให้ความสนใจในโครงการ น้องมีสิทธิเป็นตัวสำรอง<br className="md:block hidden"/>หากได้รับเลือกเป็นตัวจริงจะมีการติดต่อยืนยันจากพี่ค่าย<br className="md:block hidden"/>พี่ค่ายจะทำการติดต่อน้อง<span className="font-semibold">ภายในวันที่ 23 มีนาคม 2568</span> <br className="md:block hidden"/>โปรดเตรียมรับโทรศัพท์ตามหมายเลขที่กรอกเอาไว้ในใบสมัคร</>),
+        more: (<span>ขอให้น้องๆ รอติดตามประกาศการเรียกตัวสำรอง ในวันที่ 23 กุมภาพันธ์ 2569 ทางโทรศัพท์ได้เลยนะครับ</span>),
 
         stamp: 'reserve',
         image: 'https://storage.comcamp.io/web-assets/result/reserve.webp'
@@ -248,9 +248,11 @@ export default function resultPage() {
                 setIsLoading(false)
             }
         } catch (error:any) {
-            setTimeout(() => {
-                fetchData();
-            }, 5000);
+            if (error.response?.status !== 403) {
+                setTimeout(() => {
+                    fetchData();
+                }, 5000);
+            }
         } finally {
 
         }
@@ -383,7 +385,8 @@ export default function resultPage() {
             setStoryData(null);
 
             try {
-                const response = await fetch(`/api/ig-story-confirmation?name=${studentInfo?.std_info_nick_name}`);
+                ///api/ig-story-confirmation?name=${studentInfo?.std_info_nick_name}
+                const response = await fetch(`https://cc37-mock.etamarov.me/api/ig-story-confirmation?name=${studentInfo?.std_info_nick_name}`);
                 if (!response.ok) throw new Error('Network response was not ok');
 
                 const blob = await response.blob();
