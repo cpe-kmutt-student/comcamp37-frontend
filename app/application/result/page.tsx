@@ -70,7 +70,7 @@ const resultState = {
 
         title: 'ข่าวดี !',
         bigtext: (<span className="text-yellow-600">คุณมีสิทธิ<br className="sm:hidden"/>ตัวสำรอง</span>),
-        more: (<span>ขอให้น้องๆ รอติดตามประกาศการเรียกตัวสำรอง ในวันที่ 23 กุมภาพันธ์ 2569 ทางโทรศัพท์ได้เลยนะครับ</span>),
+        more: (<span>ขอให้น้องๆ รอติดตามประกาศการเรียกตัวสำรอง ในวันที่ 23 มีนาคม 2569 ทางโทรศัพท์ได้เลยนะครับ</span>),
 
         stamp: 'reserve',
         image: 'https://storage.comcamp.io/web-assets/result/reserve.webp'
