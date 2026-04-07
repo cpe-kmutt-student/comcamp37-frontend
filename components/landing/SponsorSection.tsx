@@ -10,6 +10,7 @@ const sponsors:SponsorItem[] = [
     { name: "บริษัท แคมป์ฮับ จำกัด", logo: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/sponsors/CAMPHUB.png`, height: 160 },
     { name: "บริษัท เอ็ม.วาย.พี เอ็นจิเนียริ่ง จำกัด", logo: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/sponsors/MYP Engineering.png`, height: 100 },
     { name: "บริษัท ทองไทยอีเล็คทริค จำกัด", logo: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/sponsors/Thong Thai Elaectric.png`, height: 100 },
+    { name: "บริษัท บี เอ็นจิเนียร์ จำกัด", logo: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/sponsors/Be-engineer.png`, height: 60 },
     { name: "SpaceDragon", logo: `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}/sponsors/Space Dragon.jpg`, height: 60 },
 ];
 
@@ -59,7 +60,7 @@ const SponsorRow = ({ items }:{items:SponsorItem[]}) => {
     if (!items || items.length === 0) return null;
 
     return (
-        <div className="flex flex-row flex-wrap items-center justify-center gap-10 md:px-15 w-full">
+        <div className="flex flex-row flex-wrap items-center justify-center gap-y-10 md:gap-x-10 gap-x-4 md:px-15 w-full">
             {items.map((sponsor) => (
                 <LogoCard
                     key={sponsor.name}

@@ -33,7 +33,7 @@ Ready to explore the code? Follow these simple steps to get the project running 
 
 1. Clone this repository
 ```bash
-git clone [https://github.com/your-repo/comcamp37-frontend.git](https://github.com/your-repo/comcamp37-frontend.git)
+git clone https://github.com/cpe-kmutt-student/comcamp37-frontend.git
 ```
 
 2. Navigate into the project directory
